@@ -259,7 +259,7 @@ inline Node* Node::highestAncestor() const
 const int initialNodeVectorSize = 11;
 typedef Vector<RefPtr<Node>, initialNodeVectorSize> NodeVector;
 
-inline void getChildNodes(Node* node, NodeVector& nodes)
+inline void getChildNodes(const Node* node, NodeVector& nodes)
 {
     ASSERT(!nodes.size());
     for (Node* child = node->firstChild(); child; child = child->nextSibling())
