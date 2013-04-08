@@ -1,0 +1,27 @@
+CONSOLE MESSAGE: line 13: Uncaught ReferenceError: _addTest is not defined
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x294
+  RenderBlock {HTML} at (0,0) size 800x294
+    RenderBody {BODY} at (8,16) size 784x270
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 28x18
+          text run at (0,0) width 28: "Pass"
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 24x18
+          text run at (0,0) width 24: "Fail"
+      RenderBlock {P} at (0,68) size 784x18
+        RenderText {#text} at (0,0) size 212x18
+          text run at (0,0) width 212: "These images should be identical:"
+      RenderBlock (anonymous) at (0,102) size 784x54
+        RenderHTMLCanvas {CANVAS} at (0,0) size 100x50
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,172) size 784x18
+        RenderText {#text} at (0,0) size 107x18
+          text run at (0,0) width 107: "Expected output:"
+      RenderBlock {P} at (0,206) size 784x24
+        RenderImage {PICTURE} at (0,0) size 20x20
+      RenderBlock {UL} at (0,246) size 784x0
+      RenderBlock (anonymous) at (0,246) size 784x24
+        RenderImage {PICTURE} at (0,0) size 20x20
+        RenderText {#text} at (0,0) size 0x0
