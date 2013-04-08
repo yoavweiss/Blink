@@ -1,0 +1,3 @@
+<picture id="img" style="display: block;"><source src="resources/abe.png"></picture>
+
+Selection: [[object HTMLDivElement], 0]

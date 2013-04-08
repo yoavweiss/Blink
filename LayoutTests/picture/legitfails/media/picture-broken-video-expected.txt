@@ -1,0 +1,8 @@
+Test that an invalid picture file generates a MEDIA_ERR_SRC_NOT_SUPPORTED error and sets networkState to NETWORK_NO_SOURCE.
+
+EVENT(error)
+EXPECTED (picture.error == '[object MediaError]') OK
+EXPECTED (picture.error.code == '4') OK
+EXPECTED (picture.networkState == '3') OK
+END OF TEST
+
