@@ -72,6 +72,7 @@ void HTMLResourcePreloader::takeAndPreload(PreloadRequestStream& r)
 
 void HTMLResourcePreloader::preload(PassOwnPtr<PreloadRequest> preload)
 {
+  LOG(Loading, "preload %s %s\n", preload->resourceURL().utf8().data(), preload->media().utf8().data());
     if(!preload->media().isEmpty()){
         ASSERT(m_document->frame());
         ASSERT(m_document->renderer());
@@ -79,6 +80,7 @@ void HTMLResourcePreloader::preload(PassOwnPtr<PreloadRequest> preload)
         if(!sourceMediaAttributeMatches(m_document->frame(), m_document->renderer()->style(), preload->media()))
             return;
     }
+  LOG(Loading, "media matches \n");
 
     CachedResourceRequest request = preload->resourceRequest(m_document);
     m_document->cachedResourceLoader()->preload(preload->resourceType(), request, preload->charset());
