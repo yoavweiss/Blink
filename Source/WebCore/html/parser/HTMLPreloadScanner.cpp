@@ -36,7 +36,6 @@
 #include "LinkRelAttribute.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
-//#include "StyleResolver.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 
@@ -169,6 +168,7 @@ public:
         if (!shouldPreload())
             return nullptr;
 
+        LOG(Loading, "createPreloadRequest %s\n", m_urlToLoad.utf8().data());
         OwnPtr<PreloadRequest> request = PreloadRequest::create(initiatorFor(m_tagId), 
                                                                 m_urlToLoad, 
                                                                 predictedBaseURL, 
@@ -199,6 +199,7 @@ private:
         if (match(attributeName, charsetAttr))
             m_charset = attributeValue;
 
+        LOG(Loading,"tagInPicture %d\n", m_tagInPicture);
         if (m_tagId == ScriptTagId || m_tagId == ImgTagId || m_tagId == PictureTagId) {
             if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
@@ -366,7 +367,7 @@ void TokenPreloadScanner::scanCommon(const Token& token, Vector<OwnPtr<PreloadRe
             m_inStyle = false;
         }
         else if (tagId == PictureTagId) {
-            m_inPicture = false;
+          m_inPicture = false;
           LOG(Loading,"out of picture\n");
         }
         return;
