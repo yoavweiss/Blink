@@ -86,6 +86,10 @@ TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLIdentifier& t
         return BaseTagId;
     if (threadSafeHTMLNamesMatch(tagName, templateTag))
         return TemplateTagId;
+    if (threadSafeHTMLNamesMatch(tagName, pictureTag))
+        return PictureTagId;
+    if (threadSafeHTMLNamesMatch(tagName, sourceTag))
+        return SourceTagId;
     return UnknownTagId;
 }
 #endif
@@ -134,15 +138,6 @@ public:
 
     void processAttributes(const HTMLToken::AttributeList& attributes)
     {
-  /*
-        if ((m_tagName != imgTag || m_inPictureSubTree)
-            && (m_tagName != sourceTag || !m_inPictureSubTree || m_picturePreloaded)
-            && m_tagName != pictureTag 
-            && m_tagName != inputTag
-            && m_tagName != linkTag
-            && m_tagName != scriptTag
-            && m_tagName != baseTag)
-            */
         ASSERT(isMainThread());
         if (m_tagId >= UnknownTagId)
             return;
@@ -168,28 +163,29 @@ public:
         if (!shouldPreload())
             return nullptr;
 
-        LOG(Loading, "createPreloadRequest %s\n", m_urlToLoad.utf8().data());
         OwnPtr<PreloadRequest> request = PreloadRequest::create(initiatorFor(m_tagId), 
                                                                 m_urlToLoad, 
                                                                 predictedBaseURL, 
                                                                 resourceType(), 
-                                                                (m_tagId == SourceTagId)? m_mediaAttribute: "");
+                                                                m_mediaAttribute);
         request->setCrossOriginModeAllowsCookies(crossOriginModeAllowsCookies());
         request->setCharset(charset());
         return request.release();
     }
 
-static bool match(const AtomicString& name, const QualifiedName& qName)
-{
-    ASSERT(isMainThread());
-    return qName.localName() == name;
-}
+    bool inPicture() { return m_tagInPicture; }
+
+    static bool match(const AtomicString& name, const QualifiedName& qName)
+    {
+        ASSERT(isMainThread());
+        return qName.localName() == name;
+    }
 
 #if ENABLE(THREADED_HTML_PARSER)
-static bool match(const HTMLIdentifier& name, const QualifiedName& qName)
-{
-    return threadSafeHTMLNamesMatch(name, qName);
-}
+    static bool match(const HTMLIdentifier& name, const QualifiedName& qName)
+    {
+        return threadSafeHTMLNamesMatch(name, qName);
+    }
 #endif
 
 private:
@@ -199,10 +195,11 @@ private:
         if (match(attributeName, charsetAttr))
             m_charset = attributeValue;
 
-        LOG(Loading,"tagInPicture %d\n", m_tagInPicture);
         if (m_tagId == ScriptTagId || m_tagId == ImgTagId || m_tagId == PictureTagId) {
-            if (match(attributeName, srcAttr))
+            if (match(attributeName, srcAttr)) {
                 setUrlToLoad(attributeValue);
+                m_tagInPicture = false;
+            }
             else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
                 m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
         } else if ((m_tagId == SourceTagId) && m_tagInPicture) {
@@ -303,6 +300,13 @@ private:
     bool m_tagInPicture;
 };
 
+static void appendBundleRequest(PreloadRequestStream& requests, bool start, bool end)
+{
+    OwnPtr<PreloadRequest> request = PreloadRequest::create(start, end);
+    if (request)
+        requests.append(request.release());
+}
+
 TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL)
     : m_documentURL(documentURL)
     , m_inStyle(false)
@@ -332,20 +336,20 @@ void TokenPreloadScanner::rewindTo(TokenPreloadScannerCheckpoint checkpointIndex
     m_checkpoints.clear();
 }
 
-void TokenPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
+void TokenPreloadScanner::scan(const HTMLToken& token, PreloadRequestStream& requests)
 {
     scanCommon(token, requests);
 }
 
 #if ENABLE(THREADED_HTML_PARSER)
-void TokenPreloadScanner::scan(const CompactHTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
+void TokenPreloadScanner::scan(const CompactHTMLToken& token, PreloadRequestStream& requests)
 {
     scanCommon(token, requests);
 }
 #endif
 
 template<typename Token>
-void TokenPreloadScanner::scanCommon(const Token& token, Vector<OwnPtr<PreloadRequest> >& requests)
+void TokenPreloadScanner::scanCommon(const Token& token, PreloadRequestStream& requests)
 {
     switch (token.type()) {
     case HTMLToken::Character: {
@@ -367,8 +371,8 @@ void TokenPreloadScanner::scanCommon(const Token& token, Vector<OwnPtr<PreloadRe
             m_inStyle = false;
         }
         else if (tagId == PictureTagId) {
-          m_inPicture = false;
-          LOG(Loading,"out of picture\n");
+            m_inPicture = false;
+            appendBundleRequest(requests, false, true);
         }
         return;
     }
@@ -385,8 +389,8 @@ void TokenPreloadScanner::scanCommon(const Token& token, Vector<OwnPtr<PreloadRe
             return;
         }
         if (tagId == PictureTagId) {
-          LOG(Loading,"in picture\n");
             m_inPicture = true;
+            appendBundleRequest(requests, true, false);
         }
         if (tagId == BaseTagId) {
             // The first <base> element is the one that wins.
@@ -398,6 +402,7 @@ void TokenPreloadScanner::scanCommon(const Token& token, Vector<OwnPtr<PreloadRe
 
         StartTagScanner scanner(tagId, m_inPicture);
         scanner.processAttributes(token.attributes());
+        m_inPicture = scanner.inPicture();
         OwnPtr<PreloadRequest> request = scanner.createPreloadRequest(m_predictedBaseElementURL);
         if (request)
             requests.append(request.release());
