@@ -70,22 +70,8 @@ void HTMLResourcePreloader::takeAndPreload(PreloadRequestStream& r)
         preload(it->release());
 }
 
-void HTMLResourcePreloader::preload(PassOwnPtr<PreloadRequest> preload)
+static bool sourceMediaAttributeMatches(Frame* frame, RenderStyle* renderStyle, const String& attributeValue)
 {
-  LOG(Loading, "preload %s %s\n", preload->resourceURL().utf8().data(), preload->media().utf8().data());
-    if(!preload->media().isEmpty()){
-        ASSERT(m_document->frame());
-        ASSERT(m_document->renderer());
-        ASSERT(m_document->renderer()->style());
-        if(!sourceMediaAttributeMatches(m_document->frame(), m_document->renderer()->style(), preload->media()))
-            return;
-    }
-  LOG(Loading, "media matches \n");
-
-    CachedResourceRequest request = preload->resourceRequest(m_document);
-    m_document->cachedResourceLoader()->preload(preload->resourceType(), request, preload->charset());
-}
-bool HTMLResourcePreloader::sourceMediaAttributeMatches(Frame* frame, RenderStyle* renderStyle, const String& attributeValue){
     if (attributeValue.isEmpty())
         return true;
     RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
@@ -93,4 +79,29 @@ bool HTMLResourcePreloader::sourceMediaAttributeMatches(Frame* frame, RenderStyl
     return mediaQueryEvaluator.eval(mediaQueries.get());
 }
 
+void HTMLResourcePreloader::preload(PassOwnPtr<PreloadRequest> preload)
+{
+    if(preload->bundleStart()){
+        m_inBundle = true;
+        return;
+    }
+    else if(preload->bundleEnd()){
+        m_inBundle = false;
+        m_foundBundleResource = false;
+        return;
+    }
+    ASSERT(m_document->frame());
+    ASSERT(m_document->renderer());
+    ASSERT(m_document->renderer()->style());
+    if(!preload->media().isEmpty() && !sourceMediaAttributeMatches(m_document->frame(), m_document->renderer()->style(), preload->media()))
+        return;
+
+    if(m_inBundle && m_foundBundleResource)
+        return;
+
+    m_foundBundleResource = true;
+
+    CachedResourceRequest request = preload->resourceRequest(m_document);
+    m_document->cachedResourceLoader()->preload(preload->resourceType(), request, preload->charset());
+}
 }
