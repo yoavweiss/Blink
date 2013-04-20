@@ -425,7 +425,7 @@
     attribute HTMLHtmlElementConstructor HTMLHtmlElement;
     attribute HTMLIFrameElementConstructor HTMLIFrameElement;
     attribute HTMLImageElementConstructor HTMLImageElement;
-    attribute HTMLPictureElementConstructor HTMLPictureElement;
+    [Conditional=PICTURE] attribute HTMLPictureElementConstructor HTMLPictureElement;
     attribute HTMLInputElementConstructor HTMLInputElement;
     attribute HTMLKeygenElementConstructor HTMLKeygenElement;
     attribute HTMLLIElementConstructor HTMLLIElement;

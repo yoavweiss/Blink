@@ -21,6 +21,7 @@
  */
 
 #include "config.h"
+#if ENABLE(PICTURE)
 #include "HTMLImageElement.h"
 #include "HTMLPictureElement.h"
 
@@ -108,3 +109,4 @@ void HTMLPictureElement::parseAttribute(const QualifiedName& name, const AtomicS
 }
 
 }
+#endif

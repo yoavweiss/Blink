@@ -49,6 +49,7 @@
       'ENABLE_SVG=<(enable_svg)',
       'ENABLE_SVG_FONTS=<(enable_svg)',
       'ENABLE_TOUCH_ICON_LOADING=<(enable_touch_icon_loading)',
+      'ENABLE_PICTURE=1',
       'ENABLE_WEBGL=1',
       'ENABLE_XHR_TIMEOUT=0',
       'WTF_USE_BUILTIN_UTF8_CODEC=1',

@@ -31,7 +31,9 @@
 #include "EventNames.h"
 #include "HTMLDocument.h"
 #include "HTMLMediaElement.h"
+#if ENABLE(PICTURE)
 #include "HTMLPictureElement.h"
+#endif
 #include "HTMLNames.h"
 #include "Logging.h"
 
@@ -60,8 +62,10 @@ Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode
     Element* parent = parentElement();
     if (parent && parent->isMediaElement())
         static_cast<HTMLMediaElement*>(parentNode())->sourceWasAdded(this);
+#if ENABLE(PICTURE)
     if (parent && parent->isPictureElement())
         static_cast<HTMLPictureElement*>(parentNode())->sourceWasAdded();
+#endif
     return InsertionDone;
 }
 
