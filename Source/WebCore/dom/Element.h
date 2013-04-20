@@ -529,7 +529,9 @@ public:
     virtual bool isMediaElement() const { return false; }
 #endif
 
+#if ENABLE(PICTURE)
     virtual bool isPictureElement() const { return false; }
+#endif
 
 #if ENABLE(INPUT_SPEECH)
     virtual bool isInputFieldSpeechButtonElement() const { return false; }

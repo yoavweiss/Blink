@@ -48,7 +48,11 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document* docum
     , m_form(form)
     , m_compositeOperator(CompositeSourceOver)
 {
-    ASSERT((hasTagName(imgTag)) || (hasTagName(pictureTag)));
+    ASSERT((hasTagName(imgTag)) 
+#if ENABLE(PICTURE)
+        || (hasTagName(pictureTag))
+#endif
+        );
     if (form)
         form->registerImgElement(this);
 }

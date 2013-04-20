@@ -62,10 +62,12 @@ TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVe
         return BaseTagId;
     if (tagName == templateTag)
         return TemplateTagId;
+#if ENABLE(PICTURE)
     if (tagName == pictureTag)
         return PictureTagId;
     if (tagName == sourceTag)
         return SourceTagId;
+#endif
     return UnknownTagId;
 }
 
@@ -86,10 +88,12 @@ TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLIdentifier& t
         return BaseTagId;
     if (threadSafeHTMLNamesMatch(tagName, templateTag))
         return TemplateTagId;
+#if ENABLE(PICTURE)
     if (threadSafeHTMLNamesMatch(tagName, pictureTag))
         return PictureTagId;
     if (threadSafeHTMLNamesMatch(tagName, sourceTag))
         return SourceTagId;
+#endif
     return UnknownTagId;
 }
 #endif
@@ -105,10 +109,12 @@ String TokenPreloadScanner::initiatorFor(TagId tagId)
         return "link";
     case ScriptTagId:
         return "script";
+#if ENABLE(PICTURE)
     case SourceTagId:
         return "source";
     case PictureTagId:
         return "picture";
+#endif
     case UnknownTagId:
     case StyleTagId:
     case BaseTagId:
@@ -122,19 +128,20 @@ String TokenPreloadScanner::initiatorFor(TagId tagId)
 
 class TokenPreloadScanner::StartTagScanner {
 public:
-    //explicit PreloadTask(const HTMLToken& token, bool inPicture, bool picturePreloaded, Frame* frame, RenderStyle* renderStyle)
-        //: m_tagName(token.name().data(), token.name().size())
-    explicit StartTagScanner(TagId tagId, bool inPicture)
+    explicit StartTagScanner(TagId tagId
+#if ENABLE(PICTURE)
+                              , bool inPicture
+#endif
+        )
         : m_tagId(tagId)
         , m_linkIsStyleSheet(false)
         , m_linkMediaAttributeIsScreen(true)
         , m_inputIsImage(false)
+#if ENABLE(PICTURE)
         , m_tagInPicture(inPicture)
-        //, m_picturePreloaded(picturePreloaded)
+#endif
     {
     }
-
-    //bool picturePreloaded(){return m_picturePreloaded;}
 
     void processAttributes(const HTMLToken::AttributeList& attributes)
     {
@@ -173,7 +180,9 @@ public:
         return request.release();
     }
 
+#if ENABLE(PICTURE)
     bool inPicture() { return m_tagInPicture; }
+#endif
 
     static bool match(const AtomicString& name, const QualifiedName& qName)
     {
@@ -195,18 +204,27 @@ private:
         if (match(attributeName, charsetAttr))
             m_charset = attributeValue;
 
-        if (m_tagId == ScriptTagId || m_tagId == ImgTagId || m_tagId == PictureTagId) {
+        if (m_tagId == ScriptTagId 
+            || m_tagId == ImgTagId 
+#if ENABLE(PICTURE)
+            || m_tagId == PictureTagId
+#endif
+            ) {
             if (match(attributeName, srcAttr)) {
                 setUrlToLoad(attributeValue);
+#if ENABLE(PICTURE)
                 m_tagInPicture = false;
+#endif
             }
             else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
                 m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
+#if ENABLE(PICTURE)
         } else if ((m_tagId == SourceTagId) && m_tagInPicture) {
             if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
             else if (match(attributeName, mediaAttr))
                 m_mediaAttribute = attributeValue;
+#endif
         } else if (m_tagId == LinkTagId) {
             if (match(attributeName, hrefAttr))
                 setUrlToLoad(attributeValue);
@@ -262,7 +280,13 @@ private:
     {
         if (m_tagId == ScriptTagId)
             return CachedResource::Script;
-        if (m_tagId == ImgTagId || (m_tagId == InputTagId && m_inputIsImage) || m_tagId == PictureTagId || m_tagId == SourceTagId)
+        if (m_tagId == ImgTagId 
+            || (m_tagId == InputTagId && m_inputIsImage) 
+#if ENABLE(PICTURE)
+            || m_tagId == PictureTagId 
+            || m_tagId == SourceTagId
+#endif
+            )
             return CachedResource::ImageResource;
         if (m_tagId == LinkTagId && m_linkIsStyleSheet && m_linkMediaAttributeIsScreen)
             return CachedResource::CSSStyleSheet;
@@ -297,7 +321,9 @@ private:
     bool m_linkMediaAttributeIsScreen;
     String m_mediaAttribute;
     bool m_inputIsImage;
+#if ENABLE(PICTURE)
     bool m_tagInPicture;
+#endif
 };
 
 static void appendBundleRequest(PreloadRequestStream& requests, bool start, bool end)
@@ -370,10 +396,12 @@ void TokenPreloadScanner::scanCommon(const Token& token, PreloadRequestStream& r
                 m_cssScanner.reset();
             m_inStyle = false;
         }
+#if ENABLE(PICTURE)
         else if (tagId == PictureTagId) {
             m_inPicture = false;
             appendBundleRequest(requests, false, true);
         }
+#endif
         return;
     }
     case HTMLToken::StartTag: {
@@ -388,10 +416,12 @@ void TokenPreloadScanner::scanCommon(const Token& token, PreloadRequestStream& r
             m_inStyle = true;
             return;
         }
+#if ENABLE(PICTURE)
         if (tagId == PictureTagId) {
             m_inPicture = true;
             appendBundleRequest(requests, true, false);
         }
+#endif
         if (tagId == BaseTagId) {
             // The first <base> element is the one that wins.
             if (!m_predictedBaseElementURL.isEmpty())
@@ -400,9 +430,15 @@ void TokenPreloadScanner::scanCommon(const Token& token, PreloadRequestStream& r
             return;
         }
 
-        StartTagScanner scanner(tagId, m_inPicture);
+        StartTagScanner scanner(tagId
+#if ENABLE(PICTURE)
+                                , m_inPicture
+#endif
+                                );
         scanner.processAttributes(token.attributes());
+#if ENABLE(PICTURE)
         m_inPicture = scanner.inPicture();
+#endif
         OwnPtr<PreloadRequest> request = scanner.createPreloadRequest(m_predictedBaseElementURL);
         if (request)
             requests.append(request.release());
@@ -414,11 +450,6 @@ void TokenPreloadScanner::scanCommon(const Token& token, PreloadRequestStream& r
     }
 }
 
-/*
-    RefPtr<RenderStyle> documentStyle = StyleResolver::styleForDocument(m_document, 0);
-    PreloadTask task(m_token, m_inPicture, m_picturePreloadedSource, m_document->frame(), documentStyle.get());
-    m_tokenizer->updateStateFor(task.tagName(), m_document->frame());
-    */
 template<typename Token>
 void TokenPreloadScanner::updatePredictedBaseURL(const Token& token)
 {
@@ -433,17 +464,6 @@ HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const K
 {
 }
 
-/*
-    if (task.tagName() == pictureTag){
-        m_inPicture = true;
-    }
-
-    if (task.tagName() == baseTag)
-        updatePredictedBaseElementURL(KURL(m_document->url(), task.baseElementHref()));
-
-    task.preload(m_document, m_predictedBaseElementURL.isEmpty() ? m_document->baseURL() : m_predictedBaseElementURL);
-    m_picturePreloadedSource = task.picturePreloaded();
-    */
 HTMLPreloadScanner::~HTMLPreloadScanner()
 {
 }
