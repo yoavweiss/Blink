@@ -20,6 +20,7 @@
  
 
 [
+    Conditional=PICTURE,
     V8SkipVTableValidation
 ] interface HTMLPictureElement : HTMLElement {
     [Reflect] attribute DOMString name;

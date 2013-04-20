@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#if ENABLE(PICTURE)
 #include "V8HTMLPictureElementConstructor.h"
 
 #include "BindingState.h"
@@ -100,3 +101,4 @@ v8::Persistent<v8::FunctionTemplate> V8HTMLPictureElementConstructor::GetTemplat
 }
 
 } // namespace WebCore
+#endif

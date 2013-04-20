@@ -72,8 +72,10 @@ private:
         InputTagId,
         LinkTagId,
         ScriptTagId,
+#if ENABLE(PICTURE)
         PictureTagId,
         SourceTagId,
+#endif
 
         // These tags are not scanned by the StartTagScanner.
         UnknownTagId,
@@ -112,7 +114,9 @@ private:
     const KURL m_documentURL;
     KURL m_predictedBaseElementURL;
     bool m_inStyle;
+#if ENABLE(PICTURE)
     bool m_inPicture;
+#endif
     size_t m_templateCount;
 
     Vector<Checkpoint> m_checkpoints;
@@ -131,11 +135,6 @@ private:
     TokenPreloadScanner m_scanner;
     SegmentedString m_source;
     HTMLToken m_token;
-    /*
-    bool m_inStyle;
-    bool m_inPicture;
-    bool m_picturePreloadedSource;
-    */
     KURL m_predictedBaseElementURL;
     OwnPtr<HTMLTokenizer> m_tokenizer;
 };
