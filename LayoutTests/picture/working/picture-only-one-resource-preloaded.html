@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Picture test</title>
+    <script>
+      if (window.testRunner) 
+          testRunner.dumpAsText();
+    </script>
+    <script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=1000"></script>
+	</head>
+
+	<body>
+    <script>
+        var shouldBeTrue = internals.isPreloaded("../resources/cake.png");
+        var shouldBeFalse = internals.isPreloaded("../resources/red.png");
+        var result = "FAIL";
+        if (shouldBeTrue && !shouldBeFalse)
+          result = "SUCCESS";
+        document.getElementsByTagName("body")[0].appendChild(document.createTextNode(result))
+    </script>
+  <p> You got cake? </p>
+		<picture alt="cake">
+			<source src="../resources/cake.png" media="screen and (min-width: 800px)" />
+			<source src="../resources/red.png" media="screen and (max-width:799px)" />
+		</picture>
+	</body>
+</html>

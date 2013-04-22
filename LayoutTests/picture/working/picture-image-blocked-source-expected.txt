@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Refused to load the image 'abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
+
+ALERT: PASS
+This test passes if it doesn't alert FAIL and does alert PASS. 
