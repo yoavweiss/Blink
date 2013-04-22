@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (80,8) size 640x584
+      RenderBlock {DIV} at (0,0) size 640x22
+        RenderImage {IMG} at (279,0) size 82x22
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (64,22) size 512x0
+        RenderInline {A} at (0,0) size 0x0
+        RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
+      RenderBlock {DIV} at (0,22) size 640x18
+        RenderText {#text} at (0,0) size 71x18
+          text run at (0,0) width 71: "SUCCESS"
+layer at (-72,30) size 200x17 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+  RenderBlock (positioned) {SPAN} at (-72,30) size 200x17
+    RenderText {#text} at (183,0) size 17x17
+      text run at (183,0) width 17: "[1]"

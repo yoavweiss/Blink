@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Picture test</title>
+	</head>
+
+	<body>
+		<p>You should see three cakes:</p>
+
+		<picture alt="cake" src="../resources/cake.png"></picture>
+
+		<picture alt="cake">
+			<source src="../resources/cake.png" />
+		</picture>
+
+		<picture alt="cake">
+			<source src="../resources/red.png" media="print" />
+			<source src="../resources/cake.png" media="screen" />
+			<img alt="red" src="../resources/red.png" />
+		</picture>
+	</body>
+</html>
