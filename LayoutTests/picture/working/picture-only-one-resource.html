@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Picture test</title>
+    <script>
+      if (window.testRunner) 
+          testRunner.dumpAsText();
+    </script>
+	</head>
+
+	<body>
+  <p> You got cake? </p>
+		<picture alt="cake">
+			<source src="../resources/cake.png" media="screen and (min-width: 800px)" />
+			<source src="../resources/red.png" media="screen and (max-width:799px)" />
+		</picture>
+    <script>
+      window.addEventListener("load", function(){
+          var fromCache = internals.isLoadingFromMemoryCache("../resources/red.png");
+          var result = "FAIL";
+          if (!fromCache)
+            result = "SUCCESS";
+          document.getElementsByTagName("body")[0].appendChild(document.createTextNode(result))
+      }, false);
+    </script>
+	</body>
+</html>

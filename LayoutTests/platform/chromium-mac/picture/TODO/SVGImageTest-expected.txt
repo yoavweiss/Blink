@@ -1,0 +1,883 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x438
+  RenderBlock {html} at (0,0) size 800x438
+    RenderBody {body} at (0,10) size 800x428
+      RenderBlock {div} at (10,0) size 780x25 [border: none (2px solid #000000) none]
+        RenderInline {span} at (0,0) size 727x18
+          RenderText {#text} at (0,0) size 727x18
+            text run at (0,0) width 727: "This XML file does not appear to have any style information associated with it. The document tree is shown below."
+        RenderBR {br} at (727,0) size 0x18
+      RenderBlock {div} at (20,38) size 780x390
+        RenderBlock {div} at (0,0) size 780x390
+          RenderBlock {div} at (0,0) size 780x390
+            RenderBlock {div} at (0,0) size 780x15
+              RenderBlock {span} at (-10,5) size 10x10
+              RenderInline {span} at (0,0) size 544x15 [color=#881280]
+                RenderText {#text} at (0,0) size 32x15
+                  text run at (0,0) width 32: "<svg"
+                RenderInline {span} at (0,0) size 112x15
+                  RenderText {#text} at (32,0) size 8x15
+                    text run at (32,0) width 8: " "
+                  RenderInline {span} at (0,0) size 16x15 [color=#994500]
+                    RenderText {#text} at (40,0) size 16x15
+                      text run at (40,0) width 16: "id"
+                  RenderText {#text} at (56,0) size 16x15
+                    text run at (56,0) width 16: "=\""
+                  RenderInline {span} at (0,0) size 64x15 [color=#1A1AA6]
+                    RenderText {#text} at (72,0) size 64x15
+                      text run at (72,0) width 64: "svg-root"
+                  RenderText {#text} at (136,0) size 8x15
+                    text run at (136,0) width 8: "\""
+                RenderInline {span} at (0,0) size 104x15
+                  RenderText {#text} at (144,0) size 8x15
+                    text run at (144,0) width 8: " "
+                  RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                    RenderText {#text} at (152,0) size 40x15
+                      text run at (152,0) width 40: "width"
+                  RenderText {#text} at (192,0) size 16x15
+                    text run at (192,0) width 16: "=\""
+                  RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                    RenderText {#text} at (208,0) size 32x15
+                      text run at (208,0) width 32: "100%"
+                  RenderText {#text} at (240,0) size 8x15
+                    text run at (240,0) width 8: "\""
+                RenderInline {span} at (0,0) size 112x15
+                  RenderText {#text} at (248,0) size 8x15
+                    text run at (248,0) width 8: " "
+                  RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                    RenderText {#text} at (256,0) size 48x15
+                      text run at (256,0) width 48: "height"
+                  RenderText {#text} at (304,0) size 16x15
+                    text run at (304,0) width 16: "=\""
+                  RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                    RenderText {#text} at (320,0) size 32x15
+                      text run at (320,0) width 32: "100%"
+                  RenderText {#text} at (352,0) size 8x15
+                    text run at (352,0) width 8: "\""
+                RenderInline {span} at (0,0) size 176x15
+                  RenderText {#text} at (360,0) size 8x15
+                    text run at (360,0) width 8: " "
+                  RenderInline {span} at (0,0) size 56x15 [color=#994500]
+                    RenderText {#text} at (368,0) size 56x15
+                      text run at (368,0) width 56: "viewBox"
+                  RenderText {#text} at (424,0) size 16x15
+                    text run at (424,0) width 16: "=\""
+                  RenderInline {span} at (0,0) size 88x15 [color=#1A1AA6]
+                    RenderText {#text} at (440,0) size 88x15
+                      text run at (440,0) width 88: "0 0 480 360"
+                  RenderText {#text} at (528,0) size 8x15
+                    text run at (528,0) width 8: "\""
+                RenderText {#text} at (536,0) size 8x15
+                  text run at (536,0) width 8: ">"
+            RenderBlock {div} at (13,15) size 767x360
+              RenderBlock (anonymous) at (0,0) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,0) size 767x75
+                RenderBlock {div} at (0,0) size 767x75
+                  RenderBlock {div} at (0,0) size 767x15
+                    RenderBlock {span} at (-10,5) size 10x10
+                    RenderInline {span} at (0,0) size 592x15 [color=#881280]
+                      RenderText {#text} at (0,0) size 96x15
+                        text run at (0,0) width 96: "<SVGTestCase"
+                      RenderInline {span} at (0,0) size 488x15
+                        RenderText {#text} at (96,0) size 8x15
+                          text run at (96,0) width 8: " "
+                        RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                          RenderText {#text} at (104,0) size 40x15
+                            text run at (104,0) width 40: "xmlns"
+                        RenderText {#text} at (144,0) size 16x15
+                          text run at (144,0) width 16: "=\""
+                        RenderInline {span} at (0,0) size 416x15 [color=#1A1AA6]
+                          RenderText {#text} at (160,0) size 416x15
+                            text run at (160,0) width 416: "http://www.w3.org/2000/02/svg/testsuite/description/"
+                        RenderText {#text} at (576,0) size 8x15
+                          text run at (576,0) width 8: "\""
+                      RenderText {#text} at (584,0) size 8x15
+                        text run at (584,0) width 8: ">"
+                  RenderBlock {div} at (13,15) size 754x45
+                    RenderBlock (anonymous) at (0,0) size 754x0
+                      RenderInline {span} at (0,0) size 0x0
+                    RenderBlock {div} at (0,0) size 754x45
+                      RenderBlock {div} at (0,0) size 754x45
+                        RenderBlock {div} at (0,0) size 754x15
+                          RenderBlock {span} at (-10,5) size 10x10
+                          RenderInline {span} at (0,0) size 440x15 [color=#881280]
+                            RenderText {#text} at (0,0) size 120x15
+                              text run at (0,0) width 120: "<OperatorScript"
+                            RenderInline {span} at (0,0) size 216x15
+                              RenderText {#text} at (120,0) size 8x15
+                                text run at (120,0) width 8: " "
+                              RenderInline {span} at (0,0) size 56x15 [color=#994500]
+                                RenderText {#text} at (128,0) size 56x15
+                                  text run at (128,0) width 56: "version"
+                              RenderText {#text} at (184,0) size 16x15
+                                text run at (184,0) width 16: "=\""
+                              RenderInline {span} at (0,0) size 128x15 [color=#1A1AA6]
+                                RenderText {#text} at (200,0) size 128x15
+                                  text run at (200,0) width 128: "$Revision: 1.1 $"
+                              RenderText {#text} at (328,0) size 8x15
+                                text run at (328,0) width 8: "\""
+                            RenderInline {span} at (0,0) size 96x15
+                              RenderText {#text} at (336,0) size 8x15
+                                text run at (336,0) width 8: " "
+                              RenderInline {span} at (0,0) size 64x15 [color=#994500]
+                                RenderText {#text} at (344,0) size 64x15
+                                  text run at (344,0) width 64: "testname"
+                              RenderText {#text} at (408,0) size 16x15
+                                text run at (408,0) width 16: "=\""
+                              RenderInline {span} at (0,0) size 0x15 [color=#1A1AA6]
+                              RenderText {#text} at (424,0) size 8x15
+                                text run at (424,0) width 8: "\""
+                            RenderText {#text} at (432,0) size 8x15
+                              text run at (432,0) width 8: ">"
+                        RenderBlock {div} at (13,15) size 741x15
+                          RenderBlock (anonymous) at (0,0) size 741x0
+                            RenderInline {span} at (0,0) size 0x0
+                          RenderBlock {div} at (0,0) size 741x15
+                            RenderInline {span} at (0,0) size 88x15 [color=#881280]
+                              RenderText {#text} at (0,0) size 80x15
+                                text run at (0,0) width 80: "<Paragraph"
+                              RenderText {#text} at (80,0) size 8x15
+                                text run at (80,0) width 8: ">"
+                            RenderInline {span} at (0,0) size 0x15
+                            RenderInline {span} at (0,0) size 96x15 [color=#881280]
+                              RenderText {#text} at (88,0) size 88x15
+                                text run at (88,0) width 88: "</Paragraph"
+                              RenderText {#text} at (176,0) size 8x15
+                                text run at (176,0) width 8: ">"
+                          RenderBlock (anonymous) at (0,15) size 741x0
+                            RenderInline {span} at (0,0) size 0x0
+                        RenderBlock {div} at (0,30) size 754x15
+                          RenderInline {span} at (0,0) size 136x15 [color=#881280]
+                            RenderText {#text} at (0,0) size 128x15
+                              text run at (0,0) width 128: "</OperatorScript"
+                            RenderText {#text} at (128,0) size 8x15
+                              text run at (128,0) width 8: ">"
+                    RenderBlock (anonymous) at (0,45) size 754x0
+                      RenderInline {span} at (0,0) size 0x0
+                  RenderBlock {div} at (0,60) size 767x15
+                    RenderInline {span} at (0,0) size 112x15 [color=#881280]
+                      RenderText {#text} at (0,0) size 104x15
+                        text run at (0,0) width 104: "</SVGTestCase"
+                      RenderText {#text} at (104,0) size 8x15
+                        text run at (104,0) width 8: ">"
+              RenderBlock (anonymous) at (0,75) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,75) size 767x15
+                RenderInline {span} at (0,0) size 184x15 [color=#881280]
+                  RenderText {#text} at (0,0) size 48x15
+                    text run at (0,0) width 48: "<title"
+                  RenderInline {span} at (0,0) size 128x15
+                    RenderText {#text} at (48,0) size 8x15
+                      text run at (48,0) width 8: " "
+                    RenderInline {span} at (0,0) size 16x15 [color=#994500]
+                      RenderText {#text} at (56,0) size 16x15
+                        text run at (56,0) width 16: "id"
+                    RenderText {#text} at (72,0) size 16x15
+                      text run at (72,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 80x15 [color=#1A1AA6]
+                      RenderText {#text} at (88,0) size 80x15
+                        text run at (88,0) width 80: "test-title"
+                    RenderText {#text} at (168,0) size 8x15
+                      text run at (168,0) width 8: "\""
+                  RenderText {#text} at (176,0) size 8x15
+                    text run at (176,0) width 8: ">"
+                RenderInline {span} at (0,0) size 0x15
+                RenderInline {span} at (0,0) size 64x15 [color=#881280]
+                  RenderText {#text} at (184,0) size 56x15
+                    text run at (184,0) width 56: "</title"
+                  RenderText {#text} at (240,0) size 8x15
+                    text run at (240,0) width 8: ">"
+              RenderBlock (anonymous) at (0,90) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,90) size 767x15
+                RenderInline {span} at (0,0) size 168x15 [color=#881280]
+                  RenderText {#text} at (0,0) size 40x15
+                    text run at (0,0) width 40: "<desc"
+                  RenderInline {span} at (0,0) size 120x15
+                    RenderText {#text} at (40,0) size 8x15
+                      text run at (40,0) width 8: " "
+                    RenderInline {span} at (0,0) size 16x15 [color=#994500]
+                      RenderText {#text} at (48,0) size 16x15
+                        text run at (48,0) width 16: "id"
+                    RenderText {#text} at (64,0) size 16x15
+                      text run at (64,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 72x15 [color=#1A1AA6]
+                      RenderText {#text} at (80,0) size 72x15
+                        text run at (80,0) width 72: "test-desc"
+                    RenderText {#text} at (152,0) size 8x15
+                      text run at (152,0) width 8: "\""
+                  RenderText {#text} at (160,0) size 8x15
+                    text run at (160,0) width 8: ">"
+                RenderInline {span} at (0,0) size 0x15
+                RenderInline {span} at (0,0) size 56x15 [color=#881280]
+                  RenderText {#text} at (168,0) size 48x15
+                    text run at (168,0) width 48: "</desc"
+                  RenderText {#text} at (216,0) size 8x15
+                    text run at (216,0) width 8: ">"
+              RenderBlock (anonymous) at (0,105) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,105) size 767x45
+                RenderBlock {div} at (0,0) size 767x45
+                  RenderBlock {div} at (0,0) size 767x15
+                    RenderBlock {span} at (-10,5) size 10x10
+                    RenderInline {span} at (0,0) size 32x15 [color=#236E25]
+                      RenderText {#text} at (0,0) size 32x15
+                        text run at (0,0) width 32: "<!--"
+                  RenderBlock {div} at (13,15) size 754x15
+                    RenderInline {span} at (0,0) size 560x15 [color=#236E25]
+                      RenderText {#text} at (0,0) size 560x15
+                        text run at (0,0) width 560: "======================================================================"
+                  RenderBlock {div} at (0,30) size 767x15
+                    RenderInline {span} at (0,0) size 24x15 [color=#236E25]
+                      RenderText {#text} at (0,0) size 24x15
+                        text run at (0,0) width 24: "-->"
+              RenderBlock (anonymous) at (0,150) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,150) size 767x45
+                RenderBlock {div} at (0,0) size 767x45
+                  RenderBlock {div} at (0,0) size 767x15
+                    RenderBlock {span} at (-10,5) size 10x10
+                    RenderInline {span} at (0,0) size 32x15 [color=#236E25]
+                      RenderText {#text} at (0,0) size 32x15
+                        text run at (0,0) width 32: "<!--"
+                  RenderBlock {div} at (13,15) size 754x15
+                    RenderInline {span} at (0,0) size 560x15 [color=#236E25]
+                      RenderText {#text} at (0,0) size 560x15
+                        text run at (0,0) width 560: "Content of Test Case follows...                  ====================="
+                  RenderBlock {div} at (0,30) size 767x15
+                    RenderInline {span} at (0,0) size 24x15 [color=#236E25]
+                      RenderText {#text} at (0,0) size 24x15
+                        text run at (0,0) width 24: "-->"
+              RenderBlock (anonymous) at (0,195) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,195) size 767x45
+                RenderBlock {div} at (0,0) size 767x45
+                  RenderBlock {div} at (0,0) size 767x15
+                    RenderBlock {span} at (-10,5) size 10x10
+                    RenderInline {span} at (0,0) size 32x15 [color=#236E25]
+                      RenderText {#text} at (0,0) size 32x15
+                        text run at (0,0) width 32: "<!--"
+                  RenderBlock {div} at (13,15) size 754x15
+                    RenderInline {span} at (0,0) size 560x15 [color=#236E25]
+                      RenderText {#text} at (0,0) size 560x15
+                        text run at (0,0) width 560: "======================================================================"
+                  RenderBlock {div} at (0,30) size 767x15
+                    RenderInline {span} at (0,0) size 24x15 [color=#236E25]
+                      RenderText {#text} at (0,0) size 24x15
+                        text run at (0,0) width 24: "-->"
+              RenderBlock (anonymous) at (0,240) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,240) size 767x15
+                RenderInline {span} at (0,0) size 592x15 [color=#881280]
+                  RenderText {#text} at (0,0) size 40x15
+                    text run at (0,0) width 40: "<rect"
+                  RenderInline {span} at (0,0) size 64x15
+                    RenderText {#text} at (40,0) size 8x15
+                      text run at (40,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (48,0) size 8x15
+                        text run at (48,0) width 8: "x"
+                    RenderText {#text} at (56,0) size 16x15
+                      text run at (56,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (72,0) size 24x15
+                        text run at (72,0) width 24: "001"
+                    RenderText {#text} at (96,0) size 8x15
+                      text run at (96,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 64x15
+                    RenderText {#text} at (104,0) size 8x15
+                      text run at (104,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (112,0) size 8x15
+                        text run at (112,0) width 8: "y"
+                    RenderText {#text} at (120,0) size 16x15
+                      text run at (120,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (136,0) size 24x15
+                        text run at (136,0) width 24: "001"
+                    RenderText {#text} at (160,0) size 8x15
+                      text run at (160,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 96x15
+                    RenderText {#text} at (168,0) size 8x15
+                      text run at (168,0) width 8: " "
+                    RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                      RenderText {#text} at (176,0) size 40x15
+                        text run at (176,0) width 40: "width"
+                    RenderText {#text} at (216,0) size 16x15
+                      text run at (216,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (232,0) size 24x15
+                        text run at (232,0) width 24: "239"
+                    RenderText {#text} at (256,0) size 8x15
+                      text run at (256,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 104x15
+                    RenderText {#text} at (264,0) size 8x15
+                      text run at (264,0) width 8: " "
+                    RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                      RenderText {#text} at (272,0) size 48x15
+                        text run at (272,0) width 48: "height"
+                    RenderText {#text} at (320,0) size 16x15
+                      text run at (320,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (336,0) size 24x15
+                        text run at (336,0) width 24: "179"
+                    RenderText {#text} at (360,0) size 8x15
+                      text run at (360,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 96x15
+                    RenderText {#text} at (368,0) size 8x15
+                      text run at (368,0) width 8: " "
+                    RenderInline {span} at (0,0) size 32x15 [color=#994500]
+                      RenderText {#text} at (376,0) size 32x15
+                        text run at (376,0) width 32: "fill"
+                    RenderText {#text} at (408,0) size 16x15
+                      text run at (408,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                      RenderText {#text} at (424,0) size 32x15
+                        text run at (424,0) width 32: "gold"
+                    RenderText {#text} at (456,0) size 8x15
+                      text run at (456,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 112x15
+                    RenderText {#text} at (464,0) size 8x15
+                      text run at (464,0) width 8: " "
+                    RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                      RenderText {#text} at (472,0) size 48x15
+                        text run at (472,0) width 48: "stroke"
+                    RenderText {#text} at (520,0) size 16x15
+                      text run at (520,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                      RenderText {#text} at (536,0) size 32x15
+                        text run at (536,0) width 32: "none"
+                    RenderText {#text} at (568,0) size 8x15
+                      text run at (568,0) width 8: "\""
+                  RenderText {#text} at (576,0) size 16x15
+                    text run at (576,0) width 16: "/>"
+              RenderBlock (anonymous) at (0,255) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,255) size 767x15
+                RenderInline {span} at (0,0) size 592x15 [color=#881280]
+                  RenderText {#text} at (0,0) size 40x15
+                    text run at (0,0) width 40: "<rect"
+                  RenderInline {span} at (0,0) size 64x15
+                    RenderText {#text} at (40,0) size 8x15
+                      text run at (40,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (48,0) size 8x15
+                        text run at (48,0) width 8: "x"
+                    RenderText {#text} at (56,0) size 16x15
+                      text run at (56,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (72,0) size 24x15
+                        text run at (72,0) width 24: "240"
+                    RenderText {#text} at (96,0) size 8x15
+                      text run at (96,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 64x15
+                    RenderText {#text} at (104,0) size 8x15
+                      text run at (104,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (112,0) size 8x15
+                        text run at (112,0) width 8: "y"
+                    RenderText {#text} at (120,0) size 16x15
+                      text run at (120,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (136,0) size 24x15
+                        text run at (136,0) width 24: "001"
+                    RenderText {#text} at (160,0) size 8x15
+                      text run at (160,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 96x15
+                    RenderText {#text} at (168,0) size 8x15
+                      text run at (168,0) width 8: " "
+                    RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                      RenderText {#text} at (176,0) size 40x15
+                        text run at (176,0) width 40: "width"
+                    RenderText {#text} at (216,0) size 16x15
+                      text run at (216,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (232,0) size 24x15
+                        text run at (232,0) width 24: "239"
+                    RenderText {#text} at (256,0) size 8x15
+                      text run at (256,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 104x15
+                    RenderText {#text} at (264,0) size 8x15
+                      text run at (264,0) width 8: " "
+                    RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                      RenderText {#text} at (272,0) size 48x15
+                        text run at (272,0) width 48: "height"
+                    RenderText {#text} at (320,0) size 16x15
+                      text run at (320,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (336,0) size 24x15
+                        text run at (336,0) width 24: "179"
+                    RenderText {#text} at (360,0) size 8x15
+                      text run at (360,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 96x15
+                    RenderText {#text} at (368,0) size 8x15
+                      text run at (368,0) width 8: " "
+                    RenderInline {span} at (0,0) size 32x15 [color=#994500]
+                      RenderText {#text} at (376,0) size 32x15
+                        text run at (376,0) width 32: "fill"
+                    RenderText {#text} at (408,0) size 16x15
+                      text run at (408,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                      RenderText {#text} at (424,0) size 32x15
+                        text run at (424,0) width 32: "blue"
+                    RenderText {#text} at (456,0) size 8x15
+                      text run at (456,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 112x15
+                    RenderText {#text} at (464,0) size 8x15
+                      text run at (464,0) width 8: " "
+                    RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                      RenderText {#text} at (472,0) size 48x15
+                        text run at (472,0) width 48: "stroke"
+                    RenderText {#text} at (520,0) size 16x15
+                      text run at (520,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                      RenderText {#text} at (536,0) size 32x15
+                        text run at (536,0) width 32: "none"
+                    RenderText {#text} at (568,0) size 8x15
+                      text run at (568,0) width 8: "\""
+                  RenderText {#text} at (576,0) size 16x15
+                    text run at (576,0) width 16: "/>"
+              RenderBlock (anonymous) at (0,270) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,270) size 767x15
+                RenderInline {span} at (0,0) size 592x15 [color=#881280]
+                  RenderText {#text} at (0,0) size 40x15
+                    text run at (0,0) width 40: "<rect"
+                  RenderInline {span} at (0,0) size 64x15
+                    RenderText {#text} at (40,0) size 8x15
+                      text run at (40,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (48,0) size 8x15
+                        text run at (48,0) width 8: "x"
+                    RenderText {#text} at (56,0) size 16x15
+                      text run at (56,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (72,0) size 24x15
+                        text run at (72,0) width 24: "001"
+                    RenderText {#text} at (96,0) size 8x15
+                      text run at (96,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 64x15
+                    RenderText {#text} at (104,0) size 8x15
+                      text run at (104,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (112,0) size 8x15
+                        text run at (112,0) width 8: "y"
+                    RenderText {#text} at (120,0) size 16x15
+                      text run at (120,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (136,0) size 24x15
+                        text run at (136,0) width 24: "180"
+                    RenderText {#text} at (160,0) size 8x15
+                      text run at (160,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 96x15
+                    RenderText {#text} at (168,0) size 8x15
+                      text run at (168,0) width 8: " "
+                    RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                      RenderText {#text} at (176,0) size 40x15
+                        text run at (176,0) width 40: "width"
+                    RenderText {#text} at (216,0) size 16x15
+                      text run at (216,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (232,0) size 24x15
+                        text run at (232,0) width 24: "239"
+                    RenderText {#text} at (256,0) size 8x15
+                      text run at (256,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 104x15
+                    RenderText {#text} at (264,0) size 8x15
+                      text run at (264,0) width 8: " "
+                    RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                      RenderText {#text} at (272,0) size 48x15
+                        text run at (272,0) width 48: "height"
+                    RenderText {#text} at (320,0) size 16x15
+                      text run at (320,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (336,0) size 24x15
+                        text run at (336,0) width 24: "179"
+                    RenderText {#text} at (360,0) size 8x15
+                      text run at (360,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 96x15
+                    RenderText {#text} at (368,0) size 8x15
+                      text run at (368,0) width 8: " "
+                    RenderInline {span} at (0,0) size 32x15 [color=#994500]
+                      RenderText {#text} at (376,0) size 32x15
+                        text run at (376,0) width 32: "fill"
+                    RenderText {#text} at (408,0) size 16x15
+                      text run at (408,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                      RenderText {#text} at (424,0) size 32x15
+                        text run at (424,0) width 32: "blue"
+                    RenderText {#text} at (456,0) size 8x15
+                      text run at (456,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 112x15
+                    RenderText {#text} at (464,0) size 8x15
+                      text run at (464,0) width 8: " "
+                    RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                      RenderText {#text} at (472,0) size 48x15
+                        text run at (472,0) width 48: "stroke"
+                    RenderText {#text} at (520,0) size 16x15
+                      text run at (520,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                      RenderText {#text} at (536,0) size 32x15
+                        text run at (536,0) width 32: "none"
+                    RenderText {#text} at (568,0) size 8x15
+                      text run at (568,0) width 8: "\""
+                  RenderText {#text} at (576,0) size 16x15
+                    text run at (576,0) width 16: "/>"
+              RenderBlock (anonymous) at (0,285) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,285) size 767x15
+                RenderInline {span} at (0,0) size 592x15 [color=#881280]
+                  RenderText {#text} at (0,0) size 40x15
+                    text run at (0,0) width 40: "<rect"
+                  RenderInline {span} at (0,0) size 64x15
+                    RenderText {#text} at (40,0) size 8x15
+                      text run at (40,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (48,0) size 8x15
+                        text run at (48,0) width 8: "x"
+                    RenderText {#text} at (56,0) size 16x15
+                      text run at (56,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (72,0) size 24x15
+                        text run at (72,0) width 24: "240"
+                    RenderText {#text} at (96,0) size 8x15
+                      text run at (96,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 64x15
+                    RenderText {#text} at (104,0) size 8x15
+                      text run at (104,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (112,0) size 8x15
+                        text run at (112,0) width 8: "y"
+                    RenderText {#text} at (120,0) size 16x15
+                      text run at (120,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (136,0) size 24x15
+                        text run at (136,0) width 24: "180"
+                    RenderText {#text} at (160,0) size 8x15
+                      text run at (160,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 96x15
+                    RenderText {#text} at (168,0) size 8x15
+                      text run at (168,0) width 8: " "
+                    RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                      RenderText {#text} at (176,0) size 40x15
+                        text run at (176,0) width 40: "width"
+                    RenderText {#text} at (216,0) size 16x15
+                      text run at (216,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (232,0) size 24x15
+                        text run at (232,0) width 24: "239"
+                    RenderText {#text} at (256,0) size 8x15
+                      text run at (256,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 104x15
+                    RenderText {#text} at (264,0) size 8x15
+                      text run at (264,0) width 8: " "
+                    RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                      RenderText {#text} at (272,0) size 48x15
+                        text run at (272,0) width 48: "height"
+                    RenderText {#text} at (320,0) size 16x15
+                      text run at (320,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (336,0) size 24x15
+                        text run at (336,0) width 24: "179"
+                    RenderText {#text} at (360,0) size 8x15
+                      text run at (360,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 96x15
+                    RenderText {#text} at (368,0) size 8x15
+                      text run at (368,0) width 8: " "
+                    RenderInline {span} at (0,0) size 32x15 [color=#994500]
+                      RenderText {#text} at (376,0) size 32x15
+                        text run at (376,0) width 32: "fill"
+                    RenderText {#text} at (408,0) size 16x15
+                      text run at (408,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                      RenderText {#text} at (424,0) size 32x15
+                        text run at (424,0) width 32: "gold"
+                    RenderText {#text} at (456,0) size 8x15
+                      text run at (456,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 112x15
+                    RenderText {#text} at (464,0) size 8x15
+                      text run at (464,0) width 8: " "
+                    RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                      RenderText {#text} at (472,0) size 48x15
+                        text run at (472,0) width 48: "stroke"
+                    RenderText {#text} at (520,0) size 16x15
+                      text run at (520,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                      RenderText {#text} at (536,0) size 32x15
+                        text run at (536,0) width 32: "none"
+                    RenderText {#text} at (568,0) size 8x15
+                      text run at (568,0) width 8: "\""
+                  RenderText {#text} at (576,0) size 16x15
+                    text run at (576,0) width 16: "/>"
+              RenderBlock (anonymous) at (0,300) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,300) size 767x15
+                RenderInline {span} at (0,0) size 456x15 [color=#881280]
+                  RenderText {#text} at (0,0) size 40x15
+                    text run at (0,0) width 40: "<text"
+                  RenderInline {span} at (0,0) size 120x15
+                    RenderText {#text} at (40,0) size 8x15
+                      text run at (40,0) width 8: " "
+                    RenderInline {span} at (0,0) size 72x15 [color=#994500]
+                      RenderText {#text} at (48,0) size 72x15
+                        text run at (48,0) width 72: "font-size"
+                    RenderText {#text} at (120,0) size 16x15
+                      text run at (120,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 16x15 [color=#1A1AA6]
+                      RenderText {#text} at (136,0) size 16x15
+                        text run at (136,0) width 16: "35"
+                    RenderText {#text} at (152,0) size 8x15
+                      text run at (152,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 64x15
+                    RenderText {#text} at (160,0) size 8x15
+                      text run at (160,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (168,0) size 8x15
+                        text run at (168,0) width 8: "x"
+                    RenderText {#text} at (176,0) size 16x15
+                      text run at (176,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (192,0) size 24x15
+                        text run at (192,0) width 24: "240"
+                    RenderText {#text} at (216,0) size 8x15
+                      text run at (216,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 56x15
+                    RenderText {#text} at (224,0) size 8x15
+                      text run at (224,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (232,0) size 8x15
+                        text run at (232,0) width 8: "y"
+                    RenderText {#text} at (240,0) size 16x15
+                      text run at (240,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 16x15 [color=#1A1AA6]
+                      RenderText {#text} at (256,0) size 16x15
+                        text run at (256,0) width 16: "35"
+                    RenderText {#text} at (272,0) size 8x15
+                      text run at (272,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 168x15
+                    RenderText {#text} at (280,0) size 8x15
+                      text run at (280,0) width 8: " "
+                    RenderInline {span} at (0,0) size 88x15 [color=#994500]
+                      RenderText {#text} at (288,0) size 88x15
+                        text run at (288,0) width 88: "text-anchor"
+                    RenderText {#text} at (376,0) size 16x15
+                      text run at (376,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 48x15 [color=#1A1AA6]
+                      RenderText {#text} at (392,0) size 48x15
+                        text run at (392,0) width 48: "middle"
+                    RenderText {#text} at (440,0) size 8x15
+                      text run at (440,0) width 8: "\""
+                  RenderText {#text} at (448,0) size 8x15
+                    text run at (448,0) width 8: ">"
+                RenderInline {span} at (0,0) size 128x15
+                  RenderText {#text} at (456,0) size 128x15
+                    text run at (456,0) width 128: "SVGImageTest.svg"
+                RenderInline {span} at (0,0) size 56x15 [color=#881280]
+                  RenderText {#text} at (584,0) size 48x15
+                    text run at (584,0) width 48: "</text"
+                  RenderText {#text} at (632,0) size 8x15
+                    text run at (632,0) width 8: ">"
+              RenderBlock (anonymous) at (0,315) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,315) size 767x30
+                RenderInline {span} at (0,0) size 616x15 [color=#881280]
+                  RenderText {#text} at (0,0) size 40x15
+                    text run at (0,0) width 40: "<text"
+                  RenderInline {span} at (0,0) size 112x15
+                    RenderText {#text} at (40,0) size 8x15
+                      text run at (40,0) width 8: " "
+                    RenderInline {span} at (0,0) size 16x15 [color=#994500]
+                      RenderText {#text} at (48,0) size 16x15
+                        text run at (48,0) width 16: "id"
+                    RenderText {#text} at (64,0) size 16x15
+                      text run at (64,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 64x15 [color=#1A1AA6]
+                      RenderText {#text} at (80,0) size 64x15
+                        text run at (80,0) width 64: "revision"
+                    RenderText {#text} at (144,0) size 8x15
+                      text run at (144,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 56x15
+                    RenderText {#text} at (152,0) size 8x15
+                      text run at (152,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (160,0) size 8x15
+                        text run at (160,0) width 8: "x"
+                    RenderText {#text} at (168,0) size 16x15
+                      text run at (168,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 16x15 [color=#1A1AA6]
+                      RenderText {#text} at (184,0) size 16x15
+                        text run at (184,0) width 16: "10"
+                    RenderText {#text} at (200,0) size 8x15
+                      text run at (200,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 64x15
+                    RenderText {#text} at (208,0) size 8x15
+                      text run at (208,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (216,0) size 8x15
+                        text run at (216,0) width 8: "y"
+                    RenderText {#text} at (224,0) size 16x15
+                      text run at (224,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (240,0) size 24x15
+                        text run at (240,0) width 24: "340"
+                    RenderText {#text} at (264,0) size 8x15
+                      text run at (264,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 120x15
+                    RenderText {#text} at (272,0) size 8x15
+                      text run at (272,0) width 8: " "
+                    RenderInline {span} at (0,0) size 72x15 [color=#994500]
+                      RenderText {#text} at (280,0) size 72x15
+                        text run at (280,0) width 72: "font-size"
+                    RenderText {#text} at (352,0) size 16x15
+                      text run at (352,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 16x15 [color=#1A1AA6]
+                      RenderText {#text} at (368,0) size 16x15
+                        text run at (368,0) width 16: "40"
+                    RenderText {#text} at (384,0) size 8x15
+                      text run at (384,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 112x15
+                    RenderText {#text} at (392,0) size 8x15
+                      text run at (392,0) width 8: " "
+                    RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                      RenderText {#text} at (400,0) size 48x15
+                        text run at (400,0) width 48: "stroke"
+                    RenderText {#text} at (448,0) size 16x15
+                      text run at (448,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                      RenderText {#text} at (464,0) size 32x15
+                        text run at (464,0) width 32: "none"
+                    RenderText {#text} at (496,0) size 8x15
+                      text run at (496,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 104x15
+                    RenderText {#text} at (504,0) size 8x15
+                      text run at (504,0) width 8: " "
+                    RenderInline {span} at (0,0) size 32x15 [color=#994500]
+                      RenderText {#text} at (512,0) size 32x15
+                        text run at (512,0) width 32: "fill"
+                    RenderText {#text} at (544,0) size 16x15
+                      text run at (544,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 40x15 [color=#1A1AA6]
+                      RenderText {#text} at (560,0) size 40x15
+                        text run at (560,0) width 40: "black"
+                    RenderText {#text} at (600,0) size 8x15
+                      text run at (600,0) width 8: "\""
+                  RenderText {#text} at (608,0) size 8x15
+                    text run at (608,0) width 8: ">"
+                RenderInline {span} at (0,0) size 728x30
+                  RenderText {#text} at (616,0) size 728x30
+                    text run at (616,0) width 112: "$Revision: 1.1"
+                    text run at (0,15) width 8: "$"
+                RenderInline {span} at (0,0) size 56x15 [color=#881280]
+                  RenderText {#text} at (8,15) size 48x15
+                    text run at (8,15) width 48: "</text"
+                  RenderText {#text} at (56,15) size 8x15
+                    text run at (56,15) width 8: ">"
+              RenderBlock (anonymous) at (0,345) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+              RenderBlock {div} at (0,345) size 767x15
+                RenderInline {span} at (0,0) size 712x15 [color=#881280]
+                  RenderText {#text} at (0,0) size 40x15
+                    text run at (0,0) width 40: "<rect"
+                  RenderInline {span} at (0,0) size 128x15
+                    RenderText {#text} at (40,0) size 8x15
+                      text run at (40,0) width 8: " "
+                    RenderInline {span} at (0,0) size 16x15 [color=#994500]
+                      RenderText {#text} at (48,0) size 16x15
+                        text run at (48,0) width 16: "id"
+                    RenderText {#text} at (64,0) size 16x15
+                      text run at (64,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 80x15 [color=#1A1AA6]
+                      RenderText {#text} at (80,0) size 80x15
+                        text run at (80,0) width 80: "test-frame"
+                    RenderText {#text} at (160,0) size 8x15
+                      text run at (160,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 48x15
+                    RenderText {#text} at (168,0) size 8x15
+                      text run at (168,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (176,0) size 8x15
+                        text run at (176,0) width 8: "x"
+                    RenderText {#text} at (184,0) size 16x15
+                      text run at (184,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 8x15 [color=#1A1AA6]
+                      RenderText {#text} at (200,0) size 8x15
+                        text run at (200,0) width 8: "1"
+                    RenderText {#text} at (208,0) size 8x15
+                      text run at (208,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 48x15
+                    RenderText {#text} at (216,0) size 8x15
+                      text run at (216,0) width 8: " "
+                    RenderInline {span} at (0,0) size 8x15 [color=#994500]
+                      RenderText {#text} at (224,0) size 8x15
+                        text run at (224,0) width 8: "y"
+                    RenderText {#text} at (232,0) size 16x15
+                      text run at (232,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 8x15 [color=#1A1AA6]
+                      RenderText {#text} at (248,0) size 8x15
+                        text run at (248,0) width 8: "1"
+                    RenderText {#text} at (256,0) size 8x15
+                      text run at (256,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 96x15
+                    RenderText {#text} at (264,0) size 8x15
+                      text run at (264,0) width 8: " "
+                    RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                      RenderText {#text} at (272,0) size 40x15
+                        text run at (272,0) width 40: "width"
+                    RenderText {#text} at (312,0) size 16x15
+                      text run at (312,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (328,0) size 24x15
+                        text run at (328,0) width 24: "478"
+                    RenderText {#text} at (352,0) size 8x15
+                      text run at (352,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 104x15
+                    RenderText {#text} at (360,0) size 8x15
+                      text run at (360,0) width 8: " "
+                    RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                      RenderText {#text} at (368,0) size 48x15
+                        text run at (368,0) width 48: "height"
+                    RenderText {#text} at (416,0) size 16x15
+                      text run at (416,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 24x15 [color=#1A1AA6]
+                      RenderText {#text} at (432,0) size 24x15
+                        text run at (432,0) width 24: "358"
+                    RenderText {#text} at (456,0) size 8x15
+                      text run at (456,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 96x15
+                    RenderText {#text} at (464,0) size 8x15
+                      text run at (464,0) width 8: " "
+                    RenderInline {span} at (0,0) size 32x15 [color=#994500]
+                      RenderText {#text} at (472,0) size 32x15
+                        text run at (472,0) width 32: "fill"
+                    RenderText {#text} at (504,0) size 16x15
+                      text run at (504,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 32x15 [color=#1A1AA6]
+                      RenderText {#text} at (520,0) size 32x15
+                        text run at (520,0) width 32: "none"
+                    RenderText {#text} at (552,0) size 8x15
+                      text run at (552,0) width 8: "\""
+                  RenderInline {span} at (0,0) size 136x15
+                    RenderText {#text} at (560,0) size 8x15
+                      text run at (560,0) width 8: " "
+                    RenderInline {span} at (0,0) size 48x15 [color=#994500]
+                      RenderText {#text} at (568,0) size 48x15
+                        text run at (568,0) width 48: "stroke"
+                    RenderText {#text} at (616,0) size 16x15
+                      text run at (616,0) width 16: "=\""
+                    RenderInline {span} at (0,0) size 56x15 [color=#1A1AA6]
+                      RenderText {#text} at (632,0) size 56x15
+                        text run at (632,0) width 56: "#000000"
+                    RenderText {#text} at (688,0) size 8x15
+                      text run at (688,0) width 8: "\""
+                  RenderText {#text} at (696,0) size 16x15
+                    text run at (696,0) width 16: "/>"
+              RenderBlock (anonymous) at (0,360) size 767x0
+                RenderInline {span} at (0,0) size 0x0
+            RenderBlock {div} at (0,375) size 780x15
+              RenderInline {span} at (0,0) size 48x15 [color=#881280]
+                RenderText {#text} at (0,0) size 40x15
+                  text run at (0,0) width 40: "</svg"
+                RenderText {#text} at (40,0) size 8x15
+                  text run at (40,0) width 8: ">"

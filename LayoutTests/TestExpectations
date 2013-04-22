@@ -1619,3 +1619,122 @@ crbug.com/238363 fast/history/saves-state-after-fragment-nav.html [ Crash ]
 crbug.com/238363 fast/speech/change-focus.html [ Crash ]
 crbug.com/238363 inspector/timeline/timeline-load.html [ Crash ]
 crbug.com/238363 virtual/softwarecompositing/overflow/overflow-hidden-canvas-layer.html [ Crash ]
+#
+##### <picture> tests that still need to be adapted from existing tests (<img>, <video>, etc.)
+
+picture/TODO [ Skip ]
+
+
+
+##### <picture> implementation issues #####
+
+# <picture> can't be dragged
+# github.com/yoavweiss/Blink/issues/1
+picture/expectedfails/picture-drag-and-drop-image-contenteditable.html [ Skip ]
+
+# <picture> does not load a <source> that is set dynamically
+# github.com/yoavweiss/Blink/issues/2
+picture/expectedfails/picture-apply-blob-url-to-img-source.html [ Skip ]
+picture/expectedfails/picture-huge-layer-img-source.html [ Skip ]
+picture/expectedfails/picture-image-load-overflow-scrollbars-source.html [ Skip ]
+picture/expectedfails/picture-image-resize-width-source2.html [ Skip ]
+
+# contenteditable: hitting delete when caret is before picture deletes the picture's source
+# github.com/yoavweiss/Blink/issues/3
+picture/expectedfails/picture-delete-before-block-image-2-source.html [ Skip ]
+
+# <picture> can't be accessed with document.name
+# github.com/yoavweiss/Blink/issues/4
+picture/expectedfails/picture-form-image-access-by-name.html [ Skip ]
+
+# AXURL not being set in accessibility tree
+# github.com/yoavweiss/Blink/issues/5
+# github.com/ResponsiveImagesCG/picture-element/issues/34
+picture/expectedfails/picture-image-link-source.html [ Skip ]
+picture/expectedfails/picture-image-link.html [ Skip ]
+
+# all matching sources and fallbacks are downloaded
+# github.com/yoavweiss/Blink/issues/6
+picture/expectedfails/picture-image-source2.html [ Skip ]
+picture/expectedfails/picture-image-source3.html [ Skip ]
+
+# role=button doesn't set AXDescription to 'alternate'
+# github.com/yoavweiss/Blink/issues/7
+# github.com/ResponsiveImagesCG/picture-element/issues/34
+picture/expectedfails/picture-img-aria-button-alt-tag.html [ Skip ]
+
+
+
+##### <picture> specification issues #####
+
+# no spec for JS Picture object (e.g. var img = new Picture; var img = new Picture();)
+# github.com/ResponsiveImagesCG/picture-element/issues/31
+picture/expectedfails/picture-cached-image-before-load-source.html [ Skip ]
+picture/expectedfails/picture-cached-image-before-load.html [ Skip ]
+picture/expectedfails/picture-gc-image-element-2.html [ Skip ]
+picture/expectedfails/picture-gc-image-element.html [ Skip ]
+picture/expectedfails/picture-image-pattern-rotate.html [ Skip ]
+picture/expectedfails/picture-image-properties.html [ Skip ]
+picture/expectedfails/picture-image-prototype.html [ Skip ]
+
+# no spec for JS execCommand('insertPicture') (cf. execCommand('insertImage'))
+# github.com/ResponsiveImagesCG/picture-element/issues/32
+picture/expectedfails/picture-insert-image-on-top-of-directional-text.html [ Skip ]
+picture/expectedfails/picture-insert-image-with-selecting-document.html [ Skip ]
+picture/expectedfails/picture-insert-images-in-pre-x-crash.html [ Skip ]
+picture/expectedfails/picture-insertImage.html [ Skip ]
+picture/expectedfails/picture-list-wrapping-image-crash.html [ Skip ]
+
+# no spec for <canvas> integration with <picture>
+# github.com/ResponsiveImagesCG/picture-element/issues/24
+picture/expectedfails/picture-2d.composite.globalAlpha.image-source.html [ Skip ]
+picture/expectedfails/picture-2d.composite.globalAlpha.image.html [ Skip ]
+picture/expectedfails/picture-2d.composite.globalAlpha.imagepattern-source.html [ Skip ]
+picture/expectedfails/picture-2d.composite.globalAlpha.imagepattern.html [ Skip ]
+picture/expectedfails/picture-2d.composite.image.copy-source.html [ Skip ]
+picture/expectedfails/picture-2d.composite.image.copy.html [ Skip ]
+
+# no spec for image maps
+# github.com/ResponsiveImagesCG/picture-element/issues/28
+picture/expectedfails/picture-anchor-image-scrolled-x-y-source.html [ Skip ]
+picture/expectedfails/picture-anchor-image-scrolled-x-y.html [ Skip ]
+picture/expectedfails/picture-aria-used-on-image-maps-source.html [ Skip ]
+picture/expectedfails/picture-aria-used-on-image-maps.html [ Skip ]
+picture/expectedfails/picture-image-map-bug16782.html [ Skip ]
+picture/expectedfails/picture-image-map.html [ Skip ]
+picture/expectedfails/picture-image-map1.html [ Skip ]
+picture/expectedfails/picture-image-map2.html [ Skip ]
+picture/expectedfails/picture-imagemap-hittest.html [ Skip ]
+picture/expectedfails/picture-imagemap-norender-crash.html [ Skip ]
+
+# no spec for media .canPlayType(type)
+# github.com/ResponsiveImagesCG/picture-element/issues/33
+picture/expectedfails/picture-broken-video.html [ Skip ]
+picture/expectedfails/picture-csp-blocks-video.html [ Skip ]
+
+# no spec for CSS content with <source>
+# github.com/ResponsiveImagesCG/picture-element/issues/25
+picture/expectedfails/picture-contentImage-source2.html [ Skip ]
+
+# no spec for media .currentSrc
+# github.com/ResponsiveImagesCG/picture-element/issues/29
+picture/expectedfails/picture-HTMLImageElement09-source.html [ Skip ]
+
+
+
+##### <picture> LayoutTest problems #####
+
+# fullscreen. works manually, but not in automated test
+picture/expectedfails/picture-full-screen-video-from-region.html [ Skip ]
+
+# can't retrieve alt attr. works manually, but not in automated test
+picture/expectedfails/picture-HTMLImageElement03.html [ Skip ]
+
+# can't retrieve longdesc attr. works manually, but not in automated test
+picture/expectedfails/picture-HTMLImageElement08.html [ Skip ]
+
+# can't retrieve usemap attr. works manually, but not in automated test
+picture/expectedfails/picture-HTMLImageElement10.html [ Skip ]
+
+# picture.onerror doesn't fire. works manually, but not in automated test
+picture/expectedfails/picture-img-blocked-no-gc-crash.html [ Skip ]

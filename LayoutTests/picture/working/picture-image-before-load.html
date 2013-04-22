@@ -1,0 +1,16 @@
+<html>
+<head>
+<script src="../resources/print.js"></script>
+</head>
+<body>
+<div id="console"></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+</script>
+
+<picture style="display:none" onbeforeload="print('PASS', 'green'); return false;" onload="print('FAIL', 'red');" src="../resources/test-load.jpg"></picture>
+
+</body>
+</html>
