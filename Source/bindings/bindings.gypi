@@ -193,6 +193,8 @@
             'v8/custom/V8HTMLFrameElementCustom.cpp',
             'v8/custom/V8HTMLImageElementConstructor.cpp',
             'v8/custom/V8HTMLImageElementConstructor.h',
+            'v8/custom/V8HTMLPictureElementConstructor.cpp',
+            'v8/custom/V8HTMLPictureElementConstructor.h',
             'v8/custom/V8HTMLLinkElementCustom.cpp',
             'v8/custom/V8HTMLMediaElementCustom.cpp',
             'v8/custom/V8HTMLOptionsCollectionCustom.cpp',

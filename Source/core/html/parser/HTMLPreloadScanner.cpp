@@ -84,20 +84,37 @@ static String initiatorFor(const StringImpl* tagImpl)
         return linkTag.localName();
     if (match(tagImpl, scriptTag))
         return scriptTag.localName();
+#if ENABLE(PICTURE)
+    if (match(tagImpl, sourceTag))
+        return sourceTag.localName();
+    if (match(tagImpl, pictureTag))
+        return pictureTag.localName();
+#endif
     ASSERT_NOT_REACHED();
     return emptyString();
 }
 
 class TokenPreloadScanner::StartTagScanner {
 public:
-    explicit StartTagScanner(const StringImpl* tagImpl)
+    explicit StartTagScanner(const StringImpl* tagImpl
+#if ENABLE(PICTURE)
+                              , bool inPicture
+#endif
+        )
         : m_tagImpl(tagImpl)
         , m_linkIsStyleSheet(false)
         , m_inputIsImage(false)
+#if ENABLE(PICTURE)
+        , m_tagInPicture(inPicture)
+#endif
     {
         if (!match(m_tagImpl, imgTag)
             && !match(m_tagImpl, inputTag)
             && !match(m_tagImpl, linkTag)
+#if ENABLE(PICTURE)
+            && !match(m_tagImpl, pictureTag)
+            && !match(m_tagImpl, sourceTag)
+#endif
             && !match(m_tagImpl, scriptTag))
             m_tagImpl = 0;
     }
@@ -135,6 +152,9 @@ public:
         return request.release();
     }
 
+#if ENABLE(PICTURE)
+    bool inPicture() { return m_tagInPicture; }
+#endif
 private:
     template<typename NameType>
     void processAttribute(const NameType& attributeName, const String& attributeValue)
@@ -142,11 +162,27 @@ private:
         if (match(attributeName, charsetAttr))
             m_charset = attributeValue;
 
-        if (match(m_tagImpl, scriptTag) || match(m_tagImpl, imgTag)) {
-            if (match(attributeName, srcAttr))
+        if (match(m_tagImpl, scriptTag) 
+            || match(m_tagImpl, imgTag)
+#if ENABLE(PICTURE)
+            || match(m_tagImpl, pictureTag)
+#endif
+            ) {
+            if (match(attributeName, srcAttr)) {
                 setUrlToLoad(attributeValue);
+#if ENABLE(PICTURE)
+                m_tagInPicture = false;
+#endif
+            }
             else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
                 m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
+#if ENABLE(PICTURE)
+        } else if (match(m_tagImpl, sourceTag) && m_tagInPicture) {
+            if (match(attributeName, srcAttr))
+                setUrlToLoad(attributeValue);
+            else if (match(attributeName, mediaAttr))
+                m_mediaAttribute = attributeValue;
+#endif
         } else if (match(m_tagImpl, linkTag)) {
             if (match(attributeName, hrefAttr))
                 setUrlToLoad(attributeValue);
@@ -189,8 +225,12 @@ private:
     {
         if (match(m_tagImpl, scriptTag))
             return Resource::Script;
-        if (match(m_tagImpl, imgTag) || (match(m_tagImpl, inputTag) && m_inputIsImage))
-            return Resource::Image;
+        if (match(m_tagImpl, imgTag) 
+            || (match(m_tagImpl, inputTag) && m_inputIsImage)
+            || (match(m_tagImpl, pictureTag))
+            || (match(m_tagImpl, sourceTag))
+            )
+            return Resource::ImageResource;
         if (match(m_tagImpl, linkTag) && m_linkIsStyleSheet)
             return Resource::CSSStyleSheet;
         ASSERT_NOT_REACHED();
@@ -220,7 +260,17 @@ private:
     bool m_linkIsStyleSheet;
     String m_mediaAttribute;
     bool m_inputIsImage;
+#if ENABLE(PICTURE)
+    bool m_tagInPicture;
+#endif
 };
+
+static void appendBundleRequest(PreloadRequestStream& requests, bool start, bool end)
+{
+    OwnPtr<PreloadRequest> request = PreloadRequest::create(start, end);
+    if (request)
+        requests.append(request.release());
+}
 
 TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL)
     : m_documentURL(documentURL)
@@ -283,6 +333,12 @@ void TokenPreloadScanner::scanCommon(const Token& token, const SegmentedString& 
                 m_cssScanner.reset();
             m_inStyle = false;
         }
+#if ENABLE(PICTURE)
+        else if (match(tagImpl, pictureTag)) {
+            m_inPicture = false;
+            appendBundleRequest(requests, false, true);
+        }
+#endif
         return;
     }
     case HTMLToken::StartTag: {
@@ -297,6 +353,12 @@ void TokenPreloadScanner::scanCommon(const Token& token, const SegmentedString& 
             m_inStyle = true;
             return;
         }
+#if ENABLE(PICTURE)
+        if (match(tagImpl, pictureTag)) {
+            m_inPicture = true;
+            appendBundleRequest(requests, true, false);
+        }
+#endif
         if (match(tagImpl, baseTag)) {
             // The first <base> element is the one that wins.
             if (!m_predictedBaseElementURL.isEmpty())
@@ -305,8 +367,15 @@ void TokenPreloadScanner::scanCommon(const Token& token, const SegmentedString& 
             return;
         }
 
-        StartTagScanner scanner(tagImpl);
+        StartTagScanner scanner(tagImpl
+#if ENABLE(PICTURE)
+                                , m_inPicture
+#endif
+                                );
         scanner.processAttributes(token.attributes());
+#if ENABLE(PICTURE)
+        m_inPicture = scanner.inPicture();
+#endif
         OwnPtr<PreloadRequest> request = scanner.createPreloadRequest(m_predictedBaseElementURL, source);
         if (request)
             requests.append(request.release());

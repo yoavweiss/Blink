@@ -86,11 +86,26 @@ void HTMLResourcePreloader::preload(PassOwnPtr<PreloadRequest> preload)
     Document* executingDocument = m_document->import() ? m_document->import()->master() : m_document;
     Document* loadingDocument = m_document;
 
+    if(preload->bundleStart()){
+        m_inBundle = true;
+        return;
+    }
+    else if(preload->bundleEnd()){
+        m_inBundle = false;
+        m_foundBundleResource = false;
+        return;
+    }
+
     ASSERT(executingDocument->frame());
     ASSERT(executingDocument->renderer());
     ASSERT(executingDocument->renderer()->style());
     if (!preload->media().isEmpty() && !mediaAttributeMatches(executingDocument->frame(), executingDocument->renderer()->style(), preload->media()))
         return;
+
+    if(m_inBundle && m_foundBundleResource)
+        return;
+
+    m_foundBundleResource = true;
 
     FetchRequest request = preload->resourceRequest(m_document);
     HistogramSupport::histogramCustomCounts("WebCore.PreloadDelayMs", static_cast<int>(1000 * (monotonicallyIncreasingTime() - preload->discoveryTime())), 0, 2000, 20);

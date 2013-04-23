@@ -26,6 +26,9 @@
 #include "config.h"
 #include "core/html/HTMLSourceElement.h"
 
+#if ENABLE(PICTURE)
+#include "HTMLPictureElement.h"
+#endif
 #include "HTMLNames.h"
 #include "core/dom/Event.h"
 #include "core/dom/EventNames.h"
@@ -58,6 +61,8 @@ Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode
     Element* parent = parentElement();
     if (parent && parent->isMediaElement())
         toHTMLMediaElement(parentNode())->sourceWasAdded(this);
+    if (parent && parent->isPictureElement())
+        static_cast<HTMLPictureElement*>(parentNode())->sourceWasAdded();
     return InsertionDone;
 }
 
@@ -74,6 +79,11 @@ void HTMLSourceElement::removedFrom(ContainerNode* removalRoot)
 void HTMLSourceElement::setSrc(const String& url)
 {
     setAttribute(srcAttr, url);
+}
+
+String HTMLSourceElement::src() const
+{
+    return getAttribute(srcAttr);
 }
 
 String HTMLSourceElement::media() const

@@ -89,6 +89,9 @@ private:
     const KURL m_documentURL;
     KURL m_predictedBaseElementURL;
     bool m_inStyle;
+#if ENABLE(PICTURE)
+    bool m_inPicture;
+#endif
     size_t m_templateCount;
 
     Vector<Checkpoint> m_checkpoints;
