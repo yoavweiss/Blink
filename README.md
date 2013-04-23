@@ -1,10 +1,10 @@
-The Responsive Images WebKit fork!!!
+The Responsive Images Blink fork!!!
 --------------------
 
-This repository contains experiments in adding the `<picture>` element to
-WebKit's WebCore library.
+This branch contains experiments in adding the `<picture>` element to
+Blink's core library.
 
-It was last synchronized with WebKit's code at 27/11/12.
+It was last synchronized with Blink's code at 23/04/13.
 
 *Note*: This is a work in progress. It does not (yet) represent a full
 implementation of the `<picture>` element [specification](http://picture.responsiveimages.org/). Please file any
@@ -14,13 +14,15 @@ inconsistency with the specification as an issue.
 Build instructions:
 ----------------------
 * Build Chromium like you normally would on [Linux](http://code.google.com/p/chromium/wiki/LinuxBuildInstructions), [OSX] (http://code.google.com/p/chromium/wiki/MacBuildInstructions) or [Android] (http://code.google.com/p/chromium/wiki/AndroidBuildInstructions)
+* run `cd src/third_party/WebKit && git remote add github git@github.com/yoavweiss/Blink.git && git fetch && git checkout -b picture &&  git pull github picture`
 * add `"src/third_party/WebKit": "ssh://git@github.com/yoavweiss/webkit.git",` to your `.gclient` `custom_deps` section
 * in `src/third_party/WebKit` run `git checkout picture`
 * If your time is precious, use [Ninja](http://code.google.com/p/chromium/wiki/NinjaBuild)
 
 Binaries:
 --------------------------
-* Ubuntu 64bit, OSX & Android binaries can be found at the [downloads]( https://github.com/yoavweiss/webkit/downloads) section.
+Currently I don't have any up-to-date binaries to distribute. But me on
+[Twitter](https://twitter.com/yoavweiss) if you *really* want one.
 
 Test page:
 ---------------------
