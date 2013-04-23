@@ -185,6 +185,8 @@
             'v8/custom/V8HTMLFrameSetElementCustom.cpp',
             'v8/custom/V8HTMLImageElementConstructor.cpp',
             'v8/custom/V8HTMLImageElementConstructor.h',
+            'v8/custom/V8HTMLPictureElementConstructor.cpp',
+            'v8/custom/V8HTMLPictureElementConstructor.h',
             'v8/custom/V8HTMLInputElementCustom.cpp',
             'v8/custom/V8HTMLLinkElementCustom.cpp',
             'v8/custom/V8HTMLMediaElementCustom.cpp',

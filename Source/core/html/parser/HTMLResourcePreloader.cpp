@@ -79,11 +79,25 @@ static bool mediaAttributeMatches(Frame* frame, RenderStyle* renderStyle, const 
 
 void HTMLResourcePreloader::preload(PassOwnPtr<PreloadRequest> preload)
 {
+    if(preload->bundleStart()){
+        m_inBundle = true;
+        return;
+    }
+    else if(preload->bundleEnd()){
+        m_inBundle = false;
+        m_foundBundleResource = false;
+        return;
+    }
     ASSERT(m_document->frame());
     ASSERT(m_document->renderer());
     ASSERT(m_document->renderer()->style());
     if (!preload->media().isEmpty() && !mediaAttributeMatches(m_document->frame(), m_document->renderer()->style(), preload->media()))
         return;
+
+    if(m_inBundle && m_foundBundleResource)
+        return;
+
+    m_foundBundleResource = true;
 
     CachedResourceRequest request = preload->resourceRequest(m_document);
     m_document->cachedResourceLoader()->preload(preload->resourceType(), request, preload->charset());

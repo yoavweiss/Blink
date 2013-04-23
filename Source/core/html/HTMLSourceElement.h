@@ -35,6 +35,7 @@ class HTMLSourceElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLSourceElement> create(const QualifiedName&, Document*);
 
+    String src() const;
     String media() const;
     String type() const;
     void setSrc(const String&);    

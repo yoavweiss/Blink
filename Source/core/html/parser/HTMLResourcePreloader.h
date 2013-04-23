@@ -35,12 +35,17 @@ class PreloadRequest {
 public:
     static PassOwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
     {
-        return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType, mediaAttribute));
+        return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType, mediaAttribute, false, false));
     }
 
     static PassOwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType)
     {
-        return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType, ""));
+        return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType, "", false, false));
+    }
+
+    static PassOwnPtr<PreloadRequest> create(bool bundleStart, bool bundleEnd)
+    {
+        return adoptPtr(new PreloadRequest("", "", KURL(), CachedResource::RawResource, "", bundleStart, bundleEnd));
     }
 
     bool isSafeToSendToAnotherThread() const;
@@ -52,15 +57,26 @@ public:
     void setCharset(const String& charset) { m_charset = charset.isolatedCopy(); }
     void setCrossOriginModeAllowsCookies(bool allowsCookies) { m_crossOriginModeAllowsCookies = allowsCookies; }
     CachedResource::Type resourceType() const { return m_resourceType; }
+    const String& resourceURL() const { return m_resourceURL; }
+    bool bundleStart() { return m_bundleStart; }
+    bool bundleEnd() { return m_bundleEnd; }
 
 private:
-    PreloadRequest(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
+    PreloadRequest( const String& initiator, 
+                    const String& resourceURL,
+                    const KURL& baseURL,
+                    CachedResource::Type resourceType,
+                    const String& mediaAttribute,
+                    bool bundleStart,
+                    bool bundleEnd)
         : m_initiator(initiator)
         , m_resourceURL(resourceURL.isolatedCopy())
         , m_baseURL(baseURL.copy())
         , m_resourceType(resourceType)
         , m_mediaAttribute(mediaAttribute.isolatedCopy())
         , m_crossOriginModeAllowsCookies(false)
+        , m_bundleStart(bundleStart)
+        , m_bundleEnd(bundleEnd)
     {
     }
 
@@ -73,6 +89,8 @@ private:
     CachedResource::Type m_resourceType;
     String m_mediaAttribute;
     bool m_crossOriginModeAllowsCookies;
+    bool m_bundleStart;
+    bool m_bundleEnd;
 };
 
 typedef Vector<OwnPtr<PreloadRequest> > PreloadRequestStream;
@@ -83,6 +101,8 @@ public:
     explicit HTMLResourcePreloader(Document* document)
         : m_document(document)
         , m_weakFactory(this)
+        , m_inBundle(false)
+        , m_foundBundleResource(false)
     {
     }
 
@@ -94,6 +114,8 @@ public:
 private:
     Document* m_document;
     WeakPtrFactory<HTMLResourcePreloader> m_weakFactory;
+    bool m_inBundle;
+    bool m_foundBundleResource;
 };
 
 }
