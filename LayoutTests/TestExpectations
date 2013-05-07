@@ -1292,7 +1292,7 @@ crbug.com/251149 [ Mac Win Debug ] media/media-constants.html [ Pass Crash ]
 ##### <picture> tests that still need to be adapted from existing tests (<img>, <video>, etc.)
 
 picture/TODO [ Skip ]
-
+picture/working/picture-image-map-update-parent-crash.html
 
 
 ##### <picture> implementation issues #####
