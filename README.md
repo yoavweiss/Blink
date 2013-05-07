@@ -4,7 +4,7 @@ The Responsive Images Blink fork!!!
 This branch contains experiments in adding the `<picture>` element to
 Blink's core library.
 
-It was last synchronized with Blink's code at 23/04/13.
+It was last synchronized with Blink's code at 07/05/13.
 
 *Note*: This is a work in progress. It does not (yet) represent a full
 implementation of the `<picture>` element [specification](http://picture.responsiveimages.org/). Please file any
