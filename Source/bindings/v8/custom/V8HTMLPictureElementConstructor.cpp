@@ -30,17 +30,18 @@
 
 #include "config.h"
 #if ENABLE(PICTURE)
-#include "V8HTMLPictureElementConstructor.h"
+#include "bindings/v8/custom/V8HTMLPictureElementConstructor.h"
 
-#include "BindingState.h"
-#include "Document.h"
-#include "Frame.h"
-#include "HTMLPictureElement.h"
-#include "HTMLNames.h"
-#include "V8Binding.h"
-#include "V8Document.h"
+//#include "BindingState.h"
+//#include "Document.h"
+//#include "Frame.h"
+#include "core/html/HTMLPictureElement.h"
 #include "V8HTMLPictureElement.h"
-#include <wtf/RefPtr.h>
+#include "HTMLNames.h"
+#include "bindings/v8/V8Binding.h"
+#include "core/dom/Document.h"
+#include "core/page/Frame.h"
+#include "wtf/RefPtr.h"
 
 namespace WebCore {
 
@@ -54,7 +55,7 @@ static v8::Handle<v8::Value> v8HTMLPictureElementConstructorMethodCustom(const v
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    Document* document = currentDocument(BindingState::instance());
+    Document* document = currentDocument();
 
     // Make sure the document is added to the DOM Node map. Otherwise, the HTMLPictureElement instance
     // may end up being the only node in the map and get garbage-collected prematurely.

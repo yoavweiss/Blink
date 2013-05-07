@@ -25,9 +25,9 @@
 #include "HTMLImageElement.h"
 #include "HTMLPictureElement.h"
 
-#include "MediaList.h"
-#include "MediaQueryEvaluator.h"
-#include "StyleResolver.h"
+#include "core/css/MediaList.h"
+#include "core/css/MediaQueryEvaluator.h"
+#include "core/css/StyleResolver.h"
 
 using namespace std;
 
