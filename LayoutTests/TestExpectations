@@ -1623,7 +1623,7 @@ crbug.com/238363 virtual/softwarecompositing/overflow/overflow-hidden-canvas-lay
 ##### <picture> tests that still need to be adapted from existing tests (<img>, <video>, etc.)
 
 picture/TODO [ Skip ]
-
+picture/working/picture-image-map-update-parent-crash.html
 
 
 ##### <picture> implementation issues #####
