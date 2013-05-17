@@ -61,7 +61,7 @@ using namespace MediaFeatureNames;
 
 enum MediaFeaturePrefix { MinPrefix, MaxPrefix, NoPrefix };
 
-typedef bool (*EvalFunc)(CSSValue*, RenderStyle*, Frame*, MediaFeaturePrefix);
+typedef bool (*EvalFunc)(CSSValue*, RenderStyle*, Frame*, MediaFeaturePrefix, MediaValues*, bool);
 typedef HashMap<AtomicStringImpl*, EvalFunc> FunctionMap;
 static FunctionMap* gFunctionMap;
 
@@ -79,6 +79,7 @@ MediaQueryEvaluator::MediaQueryEvaluator(bool mediaFeatureResult)
     : m_frame(0)
     , m_style(0)
     , m_expResult(mediaFeatureResult)
+    , m_mediaValues(0)
 {
 }
 
@@ -87,6 +88,7 @@ MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, bool m
     , m_frame(0)
     , m_style(0)
     , m_expResult(mediaFeatureResult)
+    , m_mediaValues(0)
 {
 }
 
@@ -95,6 +97,7 @@ MediaQueryEvaluator::MediaQueryEvaluator(const char* acceptedMediaType, bool med
     , m_frame(0)
     , m_style(0)
     , m_expResult(mediaFeatureResult)
+    , m_mediaValues(0)
 {
 }
 
@@ -103,6 +106,16 @@ MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, Frame*
     , m_frame(frame)
     , m_style(style)
     , m_expResult(false) // doesn't matter when we have m_frame and m_style
+    , m_mediaValues(0)
+{
+}
+
+MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, MediaValues* mediaValues, bool mediaFeatureResult)
+    : m_mediaType(acceptedMediaType)
+    , m_frame(0)
+    , m_style(0)
+    , m_expResult(mediaFeatureResult)
+    , m_mediaValues(mediaValues)
 {
 }
 
@@ -222,8 +235,11 @@ static bool numberValue(CSSValue* value, float& result)
     return false;
 }
 
-static bool colorMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
+static bool colorMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
 {
+    if(!frame)
+        return expectedValue;
+
     int bitsPerComponent = screenDepthPerComponent(frame->page()->mainFrame()->view());
     float number;
     if (value)
@@ -232,8 +248,11 @@ static bool colorMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, M
     return bitsPerComponent != 0;
 }
 
-static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
+static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
 {
+    if(!frame || !style)
+        return expectedValue;
+
     if (!screenIsMonochrome(frame->page()->mainFrame()->view())) {
         if (value) {
             float number;
@@ -242,7 +261,7 @@ static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Fram
         return false;
     }
 
-    return colorMediaFeatureEval(value, style, frame, op);
+    return colorMediaFeatureEval(value, style, frame, op, 0, expectedValue);
 }
 
 static IntSize viewportSize(FrameView* view)
@@ -250,8 +269,11 @@ static IntSize viewportSize(FrameView* view)
     return view->layoutSize(ScrollableArea::IncludeScrollbars);
 }
 
-static bool orientationMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix)
+static bool orientationMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
+    if(!frame)
+        return expectedValue;
+
     FrameView* view = frame->view();
     int width = viewportSize(view).width();
     int height = viewportSize(view).height();
@@ -266,8 +288,11 @@ static bool orientationMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fr
     return height >= 0 && width >= 0;
 }
 
-static bool aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
+static bool aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
 {
+    if(!frame)
+        return expectedValue;
+
     if (value) {
         FrameView* view = frame->view();
         return compareAspectRatioValue(value, viewportSize(view).width(), viewportSize(view).height(), op);
@@ -278,8 +303,11 @@ static bool aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* f
     return true;
 }
 
-static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
+static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
 {
+    if(!frame)
+        return expectedValue;
+
     if (value) {
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         return compareAspectRatioValue(value, static_cast<int>(sg.width()), static_cast<int>(sg.height()), op);
@@ -290,8 +318,11 @@ static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, F
     return true;
 }
 
-static bool device_pixel_ratioMediaFeatureEval(CSSValue *value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
+static bool device_pixel_ratioMediaFeatureEval(CSSValue *value, RenderStyle*, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
 {
+    if(!frame)
+        return expectedValue;
+
     // FIXME: Possible handle other media types than 'screen' and 'print'.
     float deviceScaleFactor = 0;
 
@@ -315,7 +346,7 @@ static bool device_pixel_ratioMediaFeatureEval(CSSValue *value, RenderStyle*, Fr
     return value->isPrimitiveValue() && compareValue(deviceScaleFactor, static_cast<CSSPrimitiveValue*>(value)->getFloatValue(), op);
 }
 
-static bool resolutionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
+static bool resolutionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
 {
 #if ENABLE(RESOLUTION_MEDIA_QUERY)
     // The DPI below is dots per CSS inch and thus not device inch. The
@@ -334,6 +365,9 @@ static bool resolutionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fra
     //     round((244 * 0.6 / 96) * 4) / 4 = 1.5
     // Example (high-range resolution laptop):
     //     round((220 * 1.0 / 96) * 4) / 4 = 2.0
+
+    if(!frame || !style)
+        return expectedValue;
 
     float horiDPI;
     float vertDPI;
@@ -416,7 +450,7 @@ static bool resolutionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fra
     return false;
 }
 
-static bool gridMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op)
+static bool gridMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op, MediaValues*, bool)
 {
     // if output device is bitmap, grid: 0 == true
     // assume we have bitmap device
@@ -446,8 +480,13 @@ static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, Rend
     return false;
 }
 
-static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
+//static getDeviceHeight(Frame* frame) {
+
+static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
 {
+    if(!frame || !style)
+        return expectedValue;
+
     if (value) {
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
@@ -461,8 +500,11 @@ static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, F
     return true;
 }
 
-static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
+static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
 {
+    if(!frame || !style)
+        return expectedValue;
+
     if (value) {
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
@@ -476,8 +518,11 @@ static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Fr
     return true;
 }
 
-static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
+static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
 {
+    if(!frame || !style)
+        return expectedValue;
+
     FrameView* view = frame->view();
 
     int height = viewportSize(view).height();
@@ -492,8 +537,11 @@ static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* f
     return height;
 }
 
-static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
+static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
 {
+    if(!frame || !style)
+        return expectedValue;
+
     FrameView* view = frame->view();
 
     int width = viewportSize(view).width();
@@ -510,107 +558,107 @@ static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* fr
 
 // rest of the functions are trampolines which set the prefix according to the media feature expression used
 
-static bool min_colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool min_colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return colorMediaFeatureEval(value, style, frame, MinPrefix);
+    return colorMediaFeatureEval(value, style, frame, MinPrefix, 0, expectedValue);
 }
 
-static bool max_colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool max_colorMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return colorMediaFeatureEval(value, style, frame, MaxPrefix);
+    return colorMediaFeatureEval(value, style, frame, MaxPrefix, 0, expectedValue);
 }
 
-static bool min_monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool min_monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return monochromeMediaFeatureEval(value, style, frame, MinPrefix);
+    return monochromeMediaFeatureEval(value, style, frame, MinPrefix, 0, expectedValue);
 }
 
-static bool max_monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool max_monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return monochromeMediaFeatureEval(value, style, frame, MaxPrefix);
+    return monochromeMediaFeatureEval(value, style, frame, MaxPrefix, 0, expectedValue);
 }
 
-static bool min_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool min_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return aspect_ratioMediaFeatureEval(value, style, frame, MinPrefix);
+    return aspect_ratioMediaFeatureEval(value, style, frame, MinPrefix, 0, expectedValue);
 }
 
-static bool max_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool max_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return aspect_ratioMediaFeatureEval(value, style, frame, MaxPrefix);
+    return aspect_ratioMediaFeatureEval(value, style, frame, MaxPrefix, 0, expectedValue);
 }
 
-static bool min_device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool min_device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return device_aspect_ratioMediaFeatureEval(value, style, frame, MinPrefix);
+    return device_aspect_ratioMediaFeatureEval(value, style, frame, MinPrefix, 0, expectedValue);
 }
 
-static bool max_device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool max_device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return device_aspect_ratioMediaFeatureEval(value, style, frame, MaxPrefix);
+    return device_aspect_ratioMediaFeatureEval(value, style, frame, MaxPrefix, 0, expectedValue);
 }
 
-static bool min_device_pixel_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool min_device_pixel_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return device_pixel_ratioMediaFeatureEval(value, style, frame, MinPrefix);
+    return device_pixel_ratioMediaFeatureEval(value, style, frame, MinPrefix, 0, expectedValue);
 }
 
-static bool max_device_pixel_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool max_device_pixel_ratioMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return device_pixel_ratioMediaFeatureEval(value, style, frame, MaxPrefix);
+    return device_pixel_ratioMediaFeatureEval(value, style, frame, MaxPrefix, 0, expectedValue);
 }
 
-static bool min_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool min_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return heightMediaFeatureEval(value, style, frame, MinPrefix);
+    return heightMediaFeatureEval(value, style, frame, MinPrefix, 0, expectedValue);
 }
 
-static bool max_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool max_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return heightMediaFeatureEval(value, style, frame, MaxPrefix);
+    return heightMediaFeatureEval(value, style, frame, MaxPrefix, 0, expectedValue);
 }
 
-static bool min_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool min_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return widthMediaFeatureEval(value, style, frame, MinPrefix);
+    return widthMediaFeatureEval(value, style, frame, MinPrefix, 0, expectedValue);
 }
 
-static bool max_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool max_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return widthMediaFeatureEval(value, style, frame, MaxPrefix);
+    return widthMediaFeatureEval(value, style, frame, MaxPrefix, 0, expectedValue);
 }
 
-static bool min_device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool min_device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return device_heightMediaFeatureEval(value, style, frame, MinPrefix);
+    return device_heightMediaFeatureEval(value, style, frame, MinPrefix, 0, expectedValue);
 }
 
-static bool max_device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool max_device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return device_heightMediaFeatureEval(value, style, frame, MaxPrefix);
+    return device_heightMediaFeatureEval(value, style, frame, MaxPrefix, 0, expectedValue);
 }
 
-static bool min_device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool min_device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return device_widthMediaFeatureEval(value, style, frame, MinPrefix);
+    return device_widthMediaFeatureEval(value, style, frame, MinPrefix, 0, expectedValue);
 }
 
-static bool max_device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool max_device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return device_widthMediaFeatureEval(value, style, frame, MaxPrefix);
+    return device_widthMediaFeatureEval(value, style, frame, MaxPrefix, 0, expectedValue);
 }
 
-static bool min_resolutionMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool min_resolutionMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return resolutionMediaFeatureEval(value, style, frame, MinPrefix);
+    return resolutionMediaFeatureEval(value, style, frame, MinPrefix, 0, expectedValue);
 }
 
-static bool max_resolutionMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix)
+static bool max_resolutionMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
-    return resolutionMediaFeatureEval(value, style, frame, MaxPrefix);
+    return resolutionMediaFeatureEval(value, style, frame, MaxPrefix, 0, expectedValue);
 }
 
-static bool animationMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op)
+static bool animationMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op, MediaValues*, bool)
 {
     if (value) {
         float number;
@@ -619,7 +667,7 @@ static bool animationMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, Med
     return true;
 }
 
-static bool transitionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op)
+static bool transitionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op, MediaValues*, bool)
 {
     if (value) {
         float number;
@@ -628,7 +676,7 @@ static bool transitionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, Me
     return true;
 }
 
-static bool transform_2dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op)
+static bool transform_2dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op, MediaValues*, bool)
 {
     if (value) {
         float number;
@@ -637,8 +685,11 @@ static bool transform_2dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, 
     return true;
 }
 
-static bool transform_3dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
+static bool transform_3dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
 {
+    if(!frame)
+        return expectedValue;
+
     bool returnValueIfNoParameter;
     int have3dRendering;
 
@@ -656,7 +707,7 @@ static bool transform_3dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* f
     return returnValueIfNoParameter;
 }
 
-static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
+static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool)
 {
     UNUSED_PARAM(op);
     if (!value)
@@ -682,8 +733,11 @@ static PointerDeviceType leastCapablePrimaryPointerDeviceType(Frame* frame)
     return UnknownPointer;
 }
 
-static bool hoverMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix)
+static bool hoverMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
+    if(!frame)
+        return expectedValue;
+
     PointerDeviceType pointer = leastCapablePrimaryPointerDeviceType(frame);
 
     // If we're on a port that hasn't explicitly opted into providing pointer device information
@@ -703,8 +757,11 @@ static bool hoverMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, M
         || (pointer == MousePointer && number == 1);
 }
 
-static bool pointerMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix)
+static bool pointerMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
+    if(!frame)
+        return expectedValue;
+
     PointerDeviceType pointer = leastCapablePrimaryPointerDeviceType(frame);
 
     // If we're on a port that hasn't explicitly opted into providing pointer device information
@@ -737,7 +794,7 @@ static void createFunctionMap()
 
 bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
 {
-    if (!m_frame || !m_style)
+    if (!m_mediaValues && (!m_frame || !m_style))
         return m_expResult;
 
     if (!expr->isValid())
@@ -751,9 +808,23 @@ bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
     // used
     EvalFunc func = gFunctionMap->get(expr->mediaFeature().impl());
     if (func)
-        return func(expr->value(), m_style.get(), m_frame, NoPrefix);
+        return func(expr->value(), m_style.get(), m_frame, NoPrefix, m_mediaValues.get(), m_expResult);
 
     return false;
+}
+
+PassRefPtr<MediaValues> MediaValues::create(Frame* frame, RenderStyle* style)
+{
+    // get the values from Frame and Style
+    FrameView* view = frame->view();
+    int viewportWidth = viewportSize(view).width();
+    int viewportHeight = viewportSize(view).height();
+    FloatRect sg = screenRect(frame->page()->mainFrame()->view());
+    int deviceWidth = sg.width();
+    int deviceHeight = sg.height();
+    float pixelRatio = frame->page()->deviceScaleFactor();
+
+    return adoptRef(new MediaValues(viewportWidth, viewportHeight, deviceWidth, deviceHeight, pixelRatio));
 }
 
 } // namespace

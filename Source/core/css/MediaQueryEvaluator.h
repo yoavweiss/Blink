@@ -29,6 +29,7 @@
 #define MediaQueryEvaluator_h
 
 #include <wtf/text/WTFString.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 class Frame;
@@ -36,6 +37,34 @@ class MediaQueryExp;
 class MediaQuerySet;
 class RenderStyle;
 class StyleResolver;
+
+class MediaValues : public RefCounted<MediaValues> {
+public:
+    // Should return a pointer that auto destructs when copied
+    PassRefPtr<MediaValues> create(Frame* frame, RenderStyle* style);
+
+    int getViewportWidth(){ return m_viewportWidth; }
+    int getViewportHeight(){ return m_viewportHeight; }
+    int getDeviceWidth(){ return m_deviceWidth; }
+    int getDeviceHeight(){ return m_deviceHeight; }
+    float getPixelRatio(){ return m_pixelRatio; }
+
+private:
+    MediaValues(int viewportWidth, int viewportHeight, int deviceWidth, int deviceHeight, float pixelRatio)
+    : m_viewportWidth(viewportWidth)
+    , m_viewportHeight(viewportHeight)
+    , m_deviceWidth(deviceWidth)
+    , m_deviceHeight(deviceHeight)
+    , m_pixelRatio(pixelRatio)
+    {
+    }
+
+    int m_viewportWidth;
+    int m_viewportHeight;
+    int m_deviceWidth;
+    int m_deviceHeight;
+    float m_pixelRatio;
+};
 
 /**
  * Class that evaluates css media queries as defined in
@@ -69,6 +98,10 @@ public:
      */
     MediaQueryEvaluator(const String& acceptedMediaType, Frame*, RenderStyle*);
 
+    /** Creates evaluator which evaluates in a thread-safe manner a subset of media values
+     */
+    MediaQueryEvaluator(const String& acceptedMediaType, MediaValues* mediaValues, bool mediaFeatureResult);
+
     ~MediaQueryEvaluator();
 
     bool mediaTypeMatch(const String& mediaTypeToMatch) const;
@@ -85,6 +118,7 @@ private:
     Frame* m_frame; // not owned
     RefPtr<RenderStyle> m_style;
     bool m_expResult;
+    RefPtr<MediaValues> m_mediaValues;
 };
 
 } // namespace
