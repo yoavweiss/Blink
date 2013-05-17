@@ -29,12 +29,13 @@
 #include "core/html/parser/HTMLPreloadScanner.h"
 
 #include "HTMLNames.h"
+#include "core/css/MediaList.h"
+#include "core/css/MediaQueryEvaluator.h"
 #include "core/html/InputTypeNames.h"
 #include "core/html/LinkRelAttribute.h"
 #include "core/html/parser/HTMLParserIdioms.h"
 #include "core/html/parser/HTMLTokenizer.h"
 #include "wtf/MainThread.h"
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -87,12 +88,22 @@ static String initiatorFor(const StringImpl* tagImpl)
     return "unknown";
 }
 
+static bool mediaAttributeMatches(const MediaValues* mediaValues, const String& attributeValue)
+{
+    RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::create(attributeValue);
+    MediaQueryEvaluator mediaQueryEvaluator("screen", mediaValues, false);
+    bool ret = mediaQueryEvaluator.eval(mediaQueries.get());
+    return ret;
+}
+
 class TokenPreloadScanner::StartTagScanner {
 public:
-    explicit StartTagScanner(const StringImpl* tagImpl)
+    explicit StartTagScanner(const StringImpl* tagImpl, PassRefPtr<MediaValues> mediaValues)
         : m_tagImpl(tagImpl)
         , m_linkIsStyleSheet(false)
         , m_inputIsImage(false)
+        , m_mediaMatch(true)
+        , m_mediaValues(MediaValues::copy(mediaValues.get()))
     {
         if (!match(m_tagImpl, imgTag)
             && !match(m_tagImpl, inputTag)
@@ -123,17 +134,18 @@ public:
 
     PassOwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL, const SegmentedString& source)
     {
-        if (!shouldPreload())
+        if (!shouldPreload() || !m_mediaMatch)
             return nullptr;
 
         TextPosition position = TextPosition(source.currentLine(), source.currentColumn());
-        OwnPtr<PreloadRequest> request = PreloadRequest::create(initiatorFor(m_tagImpl), position, m_urlToLoad, predictedBaseURL, resourceType(), m_mediaAttribute);
+        OwnPtr<PreloadRequest> request = PreloadRequest::create(initiatorFor(m_tagImpl), position, m_urlToLoad, predictedBaseURL, resourceType());
         request->setCrossOriginModeAllowsCookies(crossOriginModeAllowsCookies());
         request->setCharset(charset());
         return request.release();
     }
 
 private:
+
     template<typename NameType>
     void processAttribute(const NameType& attributeName, const String& attributeValue)
     {
@@ -151,7 +163,7 @@ private:
             else if (match(attributeName, relAttr))
                 m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
             else if (match(attributeName, mediaAttr))
-                m_mediaAttribute = attributeValue;
+                m_mediaMatch = mediaAttributeMatches(m_mediaValues.get(), attributeValue);
         } else if (match(m_tagImpl, inputTag)) {
             if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
@@ -216,14 +228,16 @@ private:
     String m_charset;
     String m_crossOriginMode;
     bool m_linkIsStyleSheet;
-    String m_mediaAttribute;
+    bool m_mediaMatch;
     bool m_inputIsImage;
+    RefPtr<MediaValues> m_mediaValues;
 };
 
-TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL)
+TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL, PassRefPtr<MediaValues> mediaValues)
     : m_documentURL(documentURL)
     , m_inStyle(false)
     , m_templateCount(0)
+    , m_mediaValues(mediaValues)
 {
 }
 
@@ -237,6 +251,7 @@ TokenPreloadScannerCheckpoint TokenPreloadScanner::createCheckpoint()
     m_checkpoints.append(Checkpoint(m_predictedBaseElementURL, m_inStyle, m_templateCount));
     return checkpoint;
 }
+
 
 void TokenPreloadScanner::rewindTo(TokenPreloadScannerCheckpoint checkpointIndex)
 {
@@ -303,7 +318,7 @@ void TokenPreloadScanner::scanCommon(const Token& token, const SegmentedString& 
             return;
         }
 
-        StartTagScanner scanner(tagImpl);
+        StartTagScanner scanner(tagImpl, m_mediaValues);
         scanner.processAttributes(token.attributes());
         OwnPtr<PreloadRequest> request = scanner.createPreloadRequest(m_predictedBaseElementURL, source);
         if (request)
@@ -324,8 +339,8 @@ void TokenPreloadScanner::updatePredictedBaseURL(const Token& token)
         m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefAttribute->value)).copy();
 }
 
-HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL)
-    : m_scanner(documentURL)
+HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL, PassRefPtr<MediaValues> mediaValues)
+    : m_scanner(documentURL, mediaValues)
     , m_tokenizer(HTMLTokenizer::create(options))
 {
 }

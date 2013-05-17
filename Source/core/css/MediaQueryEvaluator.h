@@ -28,6 +28,7 @@
 #ifndef MediaQueryEvaluator_h
 #define MediaQueryEvaluator_h
 
+#include "wtf/RefCounted.h"
 #include "wtf/text/WTFString.h"
 
 namespace WebCore {
@@ -36,6 +37,64 @@ class MediaQueryExp;
 class MediaQuerySet;
 class RenderStyle;
 class StyleResolver;
+class Document;
+
+class MediaValues : public RefCounted<MediaValues> {
+public:
+    // Should return a pointer that auto destructs when copied
+    static PassRefPtr<MediaValues> create(Document*);
+    static PassRefPtr<MediaValues> copy(const MediaValues*);
+
+    int getViewportWidth() { return m_viewportWidth; }
+    int getViewportHeight() { return m_viewportHeight; }
+    int getDeviceWidth() { return m_deviceWidth; }
+    int getDeviceHeight() { return m_deviceHeight; }
+    float getPixelRatio() { return m_pixelRatio; }
+    int getColorBitsPerComponent() { return m_colorBitsPerComponent; }
+    int getMonochromeBitsPerComponent() { return m_monochromeBitsPerComponent; }
+    int getPointer() { return m_pointer; }
+    int getDefaultFontSize() { return m_defaultFontSize; }
+    bool getThreeDEnabled() { return m_threeDEnabled; }
+    String getMediaType() { return m_mediaType; }
+
+private:
+    MediaValues(int viewportWidth,
+        int viewportHeight,
+        int deviceWidth,
+        int deviceHeight,
+        float pixelRatio,
+        int colorBitsPerComponent,
+        int monochromeBitsPerComponent,
+        int pointer,
+        int defaultFontSize,
+        int threeDEnabled,
+        String mediaType)
+    : m_viewportWidth(viewportWidth)
+    , m_viewportHeight(viewportHeight)
+    , m_deviceWidth(deviceWidth)
+    , m_deviceHeight(deviceHeight)
+    , m_pixelRatio(pixelRatio)
+    , m_colorBitsPerComponent(colorBitsPerComponent)
+    , m_monochromeBitsPerComponent(monochromeBitsPerComponent)
+    , m_pointer(pointer)
+    , m_defaultFontSize(defaultFontSize)
+    , m_threeDEnabled(threeDEnabled)
+    , m_mediaType(mediaType.isolatedCopy())
+    {
+    }
+
+    int m_viewportWidth;
+    int m_viewportHeight;
+    int m_deviceWidth;
+    int m_deviceHeight;
+    float m_pixelRatio;
+    int m_colorBitsPerComponent;
+    int m_monochromeBitsPerComponent;
+    int m_pointer;
+    int m_defaultFontSize;
+    bool m_threeDEnabled;
+    String m_mediaType;
+};
 
 /**
  * Class that evaluates css media queries as defined in
@@ -68,6 +127,10 @@ public:
     /** Creates evaluator which evaluates full media queries */
     MediaQueryEvaluator(const AtomicString& acceptedMediaType, Frame*, RenderStyle*);
 
+    /** Creates evaluator which evaluates in a thread-safe manner a subset of media values
+     */
+    MediaQueryEvaluator(const String& acceptedMediaType, const MediaValues* , bool mediaFeatureResult);
+
     ~MediaQueryEvaluator();
 
     bool mediaTypeMatch(const AtomicString& mediaTypeToMatch) const;
@@ -84,6 +147,7 @@ private:
     Frame* m_frame; // Not owned.
     RefPtr<RenderStyle> m_style;
     bool m_expResult;
+    RefPtr<MediaValues> m_mediaValues;
 };
 
 } // namespace

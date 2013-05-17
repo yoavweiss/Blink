@@ -27,6 +27,7 @@
 #include "core/html/parser/HTMLDocumentParser.h"
 
 #include "HTMLNames.h"
+#include "core/css/MediaQueryEvaluator.h"
 #include "core/dom/DocumentFragment.h"
 #include "core/dom/Element.h"
 #include "core/html/parser/AtomicHTMLToken.h"
@@ -478,7 +479,7 @@ void HTMLDocumentParser::forcePlaintextForTextDocument()
         // This method is called before any data is appended, so we have to start
         // the background parser ourselves.
         if (!m_haveBackgroundParser)
-            startBackgroundParser();
+            startBackgroundParser(MediaValues::create(document()));
 
         HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::forcePlaintextForTextDocument, m_backgroundParser));
     } else
@@ -548,7 +549,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     if (isWaitingForScripts()) {
         ASSERT(m_tokenizer->state() == HTMLTokenizer::DataState);
         if (!m_preloadScanner) {
-            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url()));
+            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), MediaValues::create(document())));
             m_preloadScanner->appendToEnd(m_input.current());
         }
         m_preloadScanner->scan(m_preloader.get(), document()->baseElementURL());
@@ -623,7 +624,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
         // Check the document.write() output with a separate preload scanner as
         // the main scanner can't deal with insertions.
         if (!m_insertionPreloadScanner)
-            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url()));
+            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), MediaValues::create(document())));
         m_insertionPreloadScanner->appendToEnd(source);
         m_insertionPreloadScanner->scan(m_preloader.get(), document()->baseElementURL());
     }
@@ -631,7 +632,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
     endIfDelayed();
 }
 
-void HTMLDocumentParser::startBackgroundParser()
+void HTMLDocumentParser::startBackgroundParser(PassRefPtr<MediaValues> mediaValues)
 {
     ASSERT(shouldUseThreading());
     ASSERT(!m_haveBackgroundParser);
@@ -647,7 +648,7 @@ void HTMLDocumentParser::startBackgroundParser()
     config->parser = m_weakFactory.createWeakPtr();
     config->xssAuditor = adoptPtr(new XSSAuditor);
     config->xssAuditor->init(document(), &m_xssAuditorDelegate);
-    config->preloadScanner = adoptPtr(new TokenPreloadScanner(document()->url().copy()));
+    config->preloadScanner = adoptPtr(new TokenPreloadScanner(document()->url().copy(), mediaValues));
 
     ASSERT(config->xssAuditor->isSafeToSendToAnotherThread());
     ASSERT(config->preloadScanner->isSafeToSendToAnotherThread());
@@ -670,8 +671,9 @@ void HTMLDocumentParser::append(PassRefPtr<StringImpl> inputSource)
         return;
 
     if (shouldUseThreading()) {
-        if (!m_haveBackgroundParser)
-            startBackgroundParser();
+        if (!m_haveBackgroundParser) {
+            startBackgroundParser(MediaValues::create(document()));
+        }
 
         ASSERT(inputSource->hasOneRef());
         Closure closure = bind(&BackgroundHTMLParser::append, m_backgroundParser, String(inputSource));

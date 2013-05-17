@@ -321,7 +321,7 @@ public:
     void startDeclarationsForMarginBox();
     void endDeclarationsForMarginBox();
 
-    MediaQueryExp* createFloatingMediaQueryExp(const AtomicString&, CSSParserValueList*);
+    MediaQueryExp* createFloatingMediaQueryExp(const String&, CSSParserValueList*);
     PassOwnPtr<MediaQueryExp> sinkFloatingMediaQueryExp(MediaQueryExp*);
     Vector<OwnPtr<MediaQueryExp> >* createFloatingMediaQueryExpList();
     PassOwnPtr<Vector<OwnPtr<MediaQueryExp> > > sinkFloatingMediaQueryExpList(Vector<OwnPtr<MediaQueryExp> >*);
