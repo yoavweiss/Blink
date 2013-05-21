@@ -47,14 +47,27 @@ public:
     int getDeviceWidth(){ return m_deviceWidth; }
     int getDeviceHeight(){ return m_deviceHeight; }
     float getPixelRatio(){ return m_pixelRatio; }
+    int getColorBitsPerComponent(){ return m_colorBitsPerComponent; }
+    int getMonochromeBitsPerComponent(){ return m_monochromeBitsPerComponent; }
+    int getPointer(){ return m_pointer; }
 
 private:
-    MediaValues(int viewportWidth, int viewportHeight, int deviceWidth, int deviceHeight, float pixelRatio)
+    MediaValues(int viewportWidth, 
+                int viewportHeight, 
+                int deviceWidth, 
+                int deviceHeight, 
+                float pixelRatio, 
+                int colorBitsPerComponent, 
+                int monochromeBitsPerComponent, 
+                int pointer)
     : m_viewportWidth(viewportWidth)
     , m_viewportHeight(viewportHeight)
     , m_deviceWidth(deviceWidth)
     , m_deviceHeight(deviceHeight)
     , m_pixelRatio(pixelRatio)
+    , m_colorBitsPerComponent(colorBitsPerComponent)
+    , m_monochromeBitsPerComponent(monochromeBitsPerComponent)
+    , m_pointer(pointer)
     {
     }
 
@@ -63,6 +76,9 @@ private:
     int m_deviceWidth;
     int m_deviceHeight;
     float m_pixelRatio;
+    int m_colorBitsPerComponent;
+    int m_monochromeBitsPerComponent;
+    int m_pointer;
 };
 
 /**
