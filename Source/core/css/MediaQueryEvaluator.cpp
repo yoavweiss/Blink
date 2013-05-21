@@ -235,7 +235,7 @@ static bool numberValue(CSSValue* value, float& result)
     return false;
 }
 
-static bool colorMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
+static bool colorMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op, MediaValues* mediaValues, bool expectedValue)
 {
     if(!frame)
         return expectedValue;
@@ -823,8 +823,23 @@ PassRefPtr<MediaValues> MediaValues::create(Frame* frame, RenderStyle* style)
     int deviceWidth = sg.width();
     int deviceHeight = sg.height();
     float pixelRatio = frame->page()->deviceScaleFactor();
+    int bitsPerComponent = screenDepthPerComponent(frame->page()->mainFrame()->view());
+    int colorBitsPerComponent = 0;
+    int monochromeBitsPerComponent = 0;
+    if(screenIsMonochrome(frame->page()->mainFrame()->view()))
+        monochromeBitsPerComponent = bitsPerComponent;
+    else
+        colorBitsPerComponent = bitsPerComponent;
+    PointerDeviceType pointer = leastCapablePrimaryPointerDeviceType(frame);
 
-    return adoptRef(new MediaValues(viewportWidth, viewportHeight, deviceWidth, deviceHeight, pixelRatio));
+    return adoptRef(new MediaValues(viewportWidth, 
+                                    viewportHeight, 
+                                    deviceWidth, 
+                                    deviceHeight, 
+                                    pixelRatio, 
+                                    colorBitsPerComponent, 
+                                    monochromeBitsPerComponent,
+                                    pointer));
 }
 
 } // namespace
