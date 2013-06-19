@@ -425,8 +425,22 @@ static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, Rend
     }
 
     if (primitiveValue->isLength()) {
-        result = primitiveValue->computeLength<int>(style, rootStyle);
-        // TODO: Isn't this a bug??? Shouldn't it return result?
+        if (style) {
+            result = primitiveValue->computeLength<int>(style, rootStyle, 1.0 /* multiplier */, true /* computingFontSize */);
+        }
+        else {
+            unsigned short type = primitiveValue->primitiveType();
+            if (type == CSSPrimitiveValue::CSS_EM || type == CSSPrimitiveValue::CSS_REM) {
+                factor = 16;
+            }
+            else if (type == CSSPrimitiveValue::CSS_PX) {
+                factor = 1;
+            }
+            else {
+                return false;
+            }
+            result = CSSPrimitiveValue::roundForImpreciseConversion<int>(primitiveType->getDoubleValue()*factor);
+        }
         return true;
     }
 
