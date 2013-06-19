@@ -43,10 +43,11 @@ public:
     static PassOwnPtr<PreloadRequest> create(const String& initiatorName, const TextPosition& initiatorPosition, const String& resourceURL, const KURL& baseURL, Resource::Type resourceType)
     {
         return adoptPtr(new PreloadRequest(initiatorName, initiatorPosition, resourceURL, baseURL, resourceType, "", false, false));
+    }
 
     static PassOwnPtr<PreloadRequest> create(bool bundleStart, bool bundleEnd)
     {
-        return adoptPtr(new PreloadRequest("", "", "", KURL(), CachedResource::RawResource, "", bundleStart, bundleEnd));
+        return adoptPtr(new PreloadRequest(String(), TextPosition(), String(), KURL(), CachedResource::RawResource, String(), bundleStart, bundleEnd));
     }
 
     bool isSafeToSendToAnotherThread() const;
