@@ -29,6 +29,7 @@
 #define MediaQueryEvaluator_h
 
 #include "wtf/text/WTFString.h"
+#include "wtf/RefCounted.h"
 
 namespace WebCore {
 class Frame;

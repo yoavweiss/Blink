@@ -430,7 +430,8 @@ static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, Rend
         }
         else {
             unsigned short type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_EM || type == CSSPrimitiveValue::CSS_REM) {
+            int factor = 0;
+            if (type == CSSPrimitiveValue::CSS_EMS || type == CSSPrimitiveValue::CSS_REMS) {
                 factor = 16;
             }
             else if (type == CSSPrimitiveValue::CSS_PX) {
@@ -439,7 +440,7 @@ static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, Rend
             else {
                 return false;
             }
-            result = CSSPrimitiveValue::roundForImpreciseConversion<int>(primitiveType->getDoubleValue()*factor);
+            result = roundForImpreciseConversion<int>(primitiveValue->getDoubleValue()*factor);
         }
         return true;
     }
@@ -772,8 +773,11 @@ static bool pointerMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame,
         || (pointer == MousePointer && id == CSSValueFine);
 }
 
-static bool scanMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix)
+static bool scanMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
 {
+    if (!frame)
+        return expectedValue;
+
     // Scan only applies to tv media.
     if (!equalIgnoringCase(frame->view()->mediaType(), "tv"))
         return false;
