@@ -239,7 +239,7 @@ static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Fram
     if (frame)
         isMonochrome = screenIsMonochrome(frame->page()->mainFrame()->view());
     else
-        isMonochrome = mediaValues->getMonochromeBitsPerComponent() != 0;
+        isMonochrome = (mediaValues->getMonochromeBitsPerComponent() > 0);
 
     if (!isMonochrome) {
         if (value) {
@@ -268,8 +268,7 @@ static bool orientationMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fr
         FrameView* view = frame->view();
         width = viewportSize(view).width();
         height = viewportSize(view).height();
-    }
-    else {
+    } else {
         width = mediaValues->getViewportWidth();
         height = mediaValues->getViewportHeight();
     }
@@ -297,8 +296,7 @@ static bool aspectRatioMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fr
             FrameView* view = frame->view();
             width = viewportSize(view).width();
             height = viewportSize(view).height();
-        }
-        else {
+        } else {
             width = mediaValues->getViewportWidth();
             height = mediaValues->getViewportHeight();
         }
@@ -323,8 +321,7 @@ static bool deviceAspectRatioMediaFeatureEval(CSSValue* value, RenderStyle*, Fra
             FloatRect sg = screenRect(frame->page()->mainFrame()->view());
             width = static_cast<int>(sg.width());
             height = static_cast<int>(sg.height());
-        }
-        else {
+        } else {
             width = mediaValues->getDeviceWidth();
             height = mediaValues->getDeviceHeight();
         }
@@ -351,16 +348,15 @@ static bool evalResolution(CSSValue* value, Frame* frame, MediaFeaturePrefix op,
     // media type of the query will either be "print" or "all".
     if (frame) {
         String mediaType = frame->view()->mediaType();
-        if (equalIgnoringCase(mediaType, "screen"))
+        if (equalIgnoringCase(mediaType, "screen")) {
             deviceScaleFactor = frame->page()->deviceScaleFactor();
-        else if (equalIgnoringCase(mediaType, "print")) {
+        } else if (equalIgnoringCase(mediaType, "print")) {
             // The resolution of images while printing should not depend on the DPI
             // of the screen. Until we support proper ways of querying this info
             // we use 300px which is considered minimum for current printers.
             deviceScaleFactor = 300 / cssPixelsPerInch;
         }
-    }
-    else {
+    } else {
         deviceScaleFactor = mediaValues->getPixelRatio();
     }
 
@@ -412,7 +408,7 @@ static bool gridMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFea
     return false;
 }
 
-static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, RenderStyle* rootStyle, int& result)
+static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, RenderStyle* rootStyle, int defaultFontSize, int& result)
 {
     if (!value->isPrimitiveValue())
         return false;
@@ -427,17 +423,14 @@ static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, Rend
     if (primitiveValue->isLength()) {
         if (style) {
             result = primitiveValue->computeLength<int>(style, rootStyle, 1.0 /* multiplier */, true /* computingFontSize */);
-        }
-        else {
+        } else {
             unsigned short type = primitiveValue->primitiveType();
             int factor = 0;
             if (type == CSSPrimitiveValue::CSS_EMS || type == CSSPrimitiveValue::CSS_REMS) {
-                factor = 16;
-            }
-            else if (type == CSSPrimitiveValue::CSS_PX) {
+                factor = defaultFontSize;
+            } else if (type == CSSPrimitiveValue::CSS_PX) {
                 factor = 1;
-            }
-            else {
+            } else {
                 return false;
             }
             result = roundForImpreciseConversion<int>(primitiveValue->getDoubleValue()*factor);
@@ -448,10 +441,9 @@ static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, Rend
     return false;
 }
 
-static bool deviceHeightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
+static bool deviceHeightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues* mediaValues, bool expectedValue)
 {
-    // TODO: Not implementing mediaValues yet, because of computeLength
-    if (!frame || !style)
+    if ((!frame || !style) && !mediaValues)
         return expectedValue;
 
     if (value) {
@@ -460,17 +452,16 @@ static bool deviceHeightMediaFeatureEval(CSSValue* value, RenderStyle* style, Fr
         int length;
         long height = sg.height();
         InspectorInstrumentation::applyScreenHeightOverride(frame, &height);
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(static_cast<int>(height), length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, mediaValues->getDefaultFontSize(), length) && compareValue(static_cast<int>(height), length, op);
     }
     // ({,min-,max-}device-height)
     // assume if we have a device, assume non-zero
     return true;
 }
 
-static bool deviceWidthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
+static bool deviceWidthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues* mediaValues, bool expectedValue)
 {
-    // TODO: Not implementing mediaValues yet, because of computeLength
-    if(!frame || !style)
+    if ((!frame || !style) && !mediaValues)
         return expectedValue;
 
     if (value) {
@@ -479,17 +470,16 @@ static bool deviceWidthMediaFeatureEval(CSSValue* value, RenderStyle* style, Fra
         int length;
         long width = sg.width();
         InspectorInstrumentation::applyScreenWidthOverride(frame, &width);
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(static_cast<int>(width), length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, mediaValues->getDefaultFontSize(), length) && compareValue(static_cast<int>(width), length, op);
     }
     // ({,min-,max-}device-width)
     // assume if we have a device, assume non-zero
     return true;
 }
 
-static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
+static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues* mediaValues, bool expectedValue)
 {
-    // TODO: Not implementing mediaValues yet, because of computeLength
-    if(!frame || !style)
+    if ((!frame || !style) && !mediaValues)
         return expectedValue;
 
     FrameView* view = frame->view();
@@ -500,16 +490,15 @@ static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* f
             height = adjustForAbsoluteZoom(height, renderView);
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(height, length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, mediaValues->getDefaultFontSize(), length) && compareValue(height, length, op);
     }
 
     return height;
 }
 
-static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
+static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op, MediaValues* mediaValues, bool expectedValue)
 {
-    // TODO: Not implementing mediaValues yet, because of computeLength
-    if(!frame || !style)
+    if ((!frame || !style) && !mediaValues)
         return expectedValue;
 
     FrameView* view = frame->view();
@@ -520,7 +509,7 @@ static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* fr
             width = adjustForAbsoluteZoom(width, renderView);
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(width, length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, mediaValues->getDefaultFontSize(), length) && compareValue(width, length, op);
     }
 
     return width;
@@ -667,18 +656,22 @@ static bool transform2dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, M
     return true;
 }
 
-static bool transform3dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op, MediaValues*, bool expectedValue)
+static bool transform3dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op, MediaValues* mediaValues, bool expectedValue)
 {
     // TODO: Not implementing mediaValues yet
-    if(!frame)
+    if (!frame && !mediaValues)
         return expectedValue;
 
     bool returnValueIfNoParameter;
     int have3dRendering;
 
     bool threeDEnabled = false;
-    if (RenderView* view = frame->contentRenderer())
-        threeDEnabled = view->compositor()->canRender3DTransforms();
+    if (frame) {
+        if (RenderView* view = frame->contentRenderer())
+            threeDEnabled = view->compositor()->canRender3DTransforms();
+    } else {
+        threeDEnabled = mediaValues->getThreeDEnabled();
+    }
 
     returnValueIfNoParameter = threeDEnabled;
     have3dRendering = threeDEnabled ? 1 : 0;
@@ -773,12 +766,18 @@ static bool pointerMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame,
         || (pointer == MousePointer && id == CSSValueFine);
 }
 
-static bool scanMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix, MediaValues*, bool expectedValue)
+static bool scanMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix, MediaValues* mediaValues, bool expectedValue)
 {
-    if (!frame)
+    if (!frame && !mediaValues)
         return expectedValue;
 
     // Scan only applies to tv media.
+    String mediaType;
+    if (frame)
+        mediaType = frame->view()->mediaType();
+    else
+        mediaType = mediaValues->getMediaType();
+
     if (!equalIgnoringCase(frame->view()->mediaType(), "tv"))
         return false;
 
@@ -835,20 +834,28 @@ PassRefPtr<MediaValues> MediaValues::create(Frame* frame, RenderStyle* style)
     int bitsPerComponent = screenDepthPerComponent(frame->page()->mainFrame()->view());
     int colorBitsPerComponent = 0;
     int monochromeBitsPerComponent = 0;
-    if(screenIsMonochrome(frame->page()->mainFrame()->view()))
+    int defaultFontSize = style->fontDescription().specifiedSize();
+    bool threeDEnabled = false;
+    String mediaType = frame->view()->mediaType();
+    if (RenderView* view = frame->contentRenderer())
+        threeDEnabled= view->compositor()->canRender3DTransforms();
+    if (screenIsMonochrome(frame->page()->mainFrame()->view()))
         monochromeBitsPerComponent = bitsPerComponent;
     else
         colorBitsPerComponent = bitsPerComponent;
     PointerDeviceType pointer = leastCapablePrimaryPointerDeviceType(frame);
 
     return adoptRef(new MediaValues(viewportWidth, 
-                                    viewportHeight, 
-                                    deviceWidth, 
-                                    deviceHeight, 
-                                    pixelRatio, 
-                                    colorBitsPerComponent, 
-                                    monochromeBitsPerComponent,
-                                    pointer));
+        viewportHeight, 
+        deviceWidth, 
+        deviceHeight, 
+        pixelRatio, 
+        colorBitsPerComponent, 
+        monochromeBitsPerComponent,
+        pointer,
+        defaultFontSize,
+        threeDEnabled,
+        mediaType));
 }
 
 } // namespace

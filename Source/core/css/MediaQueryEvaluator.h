@@ -28,8 +28,8 @@
 #ifndef MediaQueryEvaluator_h
 #define MediaQueryEvaluator_h
 
-#include "wtf/text/WTFString.h"
 #include "wtf/RefCounted.h"
+#include "wtf/text/WTFString.h"
 
 namespace WebCore {
 class Frame;
@@ -41,26 +41,32 @@ class StyleResolver;
 class MediaValues : public RefCounted<MediaValues> {
 public:
     // Should return a pointer that auto destructs when copied
-    PassRefPtr<MediaValues> create(Frame* frame, RenderStyle* style);
+    PassRefPtr<MediaValues> create(Frame*, RenderStyle*);
 
-    int getViewportWidth(){ return m_viewportWidth; }
-    int getViewportHeight(){ return m_viewportHeight; }
-    int getDeviceWidth(){ return m_deviceWidth; }
-    int getDeviceHeight(){ return m_deviceHeight; }
-    float getPixelRatio(){ return m_pixelRatio; }
-    int getColorBitsPerComponent(){ return m_colorBitsPerComponent; }
-    int getMonochromeBitsPerComponent(){ return m_monochromeBitsPerComponent; }
-    int getPointer(){ return m_pointer; }
+    int getViewportWidth() { return m_viewportWidth; }
+    int getViewportHeight() { return m_viewportHeight; }
+    int getDeviceWidth() { return m_deviceWidth; }
+    int getDeviceHeight() { return m_deviceHeight; }
+    float getPixelRatio() { return m_pixelRatio; }
+    int getColorBitsPerComponent() { return m_colorBitsPerComponent; }
+    int getMonochromeBitsPerComponent() { return m_monochromeBitsPerComponent; }
+    int getPointer() { return m_pointer; }
+    int getDefaultFontSize() { return m_defaultFontSize; }
+    bool getThreeDEnabled() { return m_threeDEnabled; }
+    String getMediaType() { return m_mediaType; }
 
 private:
     MediaValues(int viewportWidth, 
-                int viewportHeight, 
-                int deviceWidth, 
-                int deviceHeight, 
-                float pixelRatio, 
-                int colorBitsPerComponent, 
-                int monochromeBitsPerComponent, 
-                int pointer)
+        int viewportHeight, 
+        int deviceWidth, 
+        int deviceHeight, 
+        float pixelRatio, 
+        int colorBitsPerComponent, 
+        int monochromeBitsPerComponent, 
+        int pointer,
+        int defaultFontSize,
+        int threeDEnabled,
+        String mediaType)
     : m_viewportWidth(viewportWidth)
     , m_viewportHeight(viewportHeight)
     , m_deviceWidth(deviceWidth)
@@ -69,6 +75,9 @@ private:
     , m_colorBitsPerComponent(colorBitsPerComponent)
     , m_monochromeBitsPerComponent(monochromeBitsPerComponent)
     , m_pointer(pointer)
+    , m_defaultFontSize(defaultFontSize)
+    , m_threeDEnabled(threeDEnabled)
+    , m_mediaType(mediaType.isolatedCopy())
     {
     }
 
@@ -80,6 +89,9 @@ private:
     int m_colorBitsPerComponent;
     int m_monochromeBitsPerComponent;
     int m_pointer;
+    int m_defaultFontSize;
+    bool m_threeDEnabled;
+    String m_mediaType;
 };
 
 /**
@@ -115,7 +127,7 @@ public:
 
     /** Creates evaluator which evaluates in a thread-safe manner a subset of media values
      */
-    MediaQueryEvaluator(const String& acceptedMediaType, MediaValues* mediaValues, bool mediaFeatureResult);
+    MediaQueryEvaluator(const String& acceptedMediaType, MediaValues* , bool mediaFeatureResult);
 
     ~MediaQueryEvaluator();
 
