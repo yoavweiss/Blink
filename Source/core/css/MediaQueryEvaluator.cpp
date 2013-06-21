@@ -40,6 +40,7 @@
 #include "core/css/MediaQueryExp.h"
 #include "core/css/resolver/StyleResolver.h"
 #include "core/dom/NodeRenderStyle.h"
+#include "core/dom/Document.h"
 #include "core/page/Frame.h"
 #include "core/page/FrameView.h"
 #include "core/page/Page.h"
@@ -821,8 +822,13 @@ bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
     return false;
 }
 
-PassRefPtr<MediaValues> MediaValues::create(Frame* frame, RenderStyle* style)
-{
+PassOwnPtr<MediaValues> MediaValues::create(Document* document) {
+    ASSERT(document->frame());
+    ASSERT(document->renderer());
+    ASSERT(document->renderer()->style());
+    Frame* frame = document->frame();
+    RenderStyle* style = document->renderer()->style();
+
     // get the values from Frame and Style
     FrameView* view = frame->view();
     int viewportWidth = viewportSize(view).width();
@@ -845,12 +851,12 @@ PassRefPtr<MediaValues> MediaValues::create(Frame* frame, RenderStyle* style)
         colorBitsPerComponent = bitsPerComponent;
     PointerDeviceType pointer = leastCapablePrimaryPointerDeviceType(frame);
 
-    return adoptRef(new MediaValues(viewportWidth, 
-        viewportHeight, 
-        deviceWidth, 
-        deviceHeight, 
-        pixelRatio, 
-        colorBitsPerComponent, 
+    return adoptPtr(new MediaValues(viewportWidth,
+        viewportHeight,
+        deviceWidth,
+        deviceHeight,
+        pixelRatio,
+        colorBitsPerComponent,
         monochromeBitsPerComponent,
         pointer,
         defaultFontSize,

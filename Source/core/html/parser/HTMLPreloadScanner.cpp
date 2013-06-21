@@ -29,6 +29,7 @@
 #include "core/html/parser/HTMLPreloadScanner.h"
 
 #include "HTMLNames.h"
+#include "core/css/MediaQueryEvaluator.h"
 #include "core/html/InputTypeNames.h"
 #include "core/html/LinkRelAttribute.h"
 #include "core/html/parser/HTMLParserIdioms.h"
@@ -221,10 +222,11 @@ private:
     bool m_inputIsImage;
 };
 
-TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL)
+TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL, PassOwnPtr<MediaValues> mediaValues)
     : m_documentURL(documentURL)
     , m_inStyle(false)
     , m_templateCount(0)
+    , m_mediaValues(mediaValues)
 {
 }
 
@@ -325,8 +327,8 @@ void TokenPreloadScanner::updatePredictedBaseURL(const Token& token)
         m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefAttribute->value)).copy();
 }
 
-HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL)
-    : m_scanner(documentURL)
+HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL, PassOwnPtr<MediaValues> mediaValues)
+    : m_scanner(documentURL, mediaValues)
     , m_tokenizer(HTMLTokenizer::create(options))
 {
 }

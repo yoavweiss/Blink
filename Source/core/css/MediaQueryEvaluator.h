@@ -37,11 +37,12 @@ class MediaQueryExp;
 class MediaQuerySet;
 class RenderStyle;
 class StyleResolver;
+class Document;
 
 class MediaValues : public RefCounted<MediaValues> {
 public:
     // Should return a pointer that auto destructs when copied
-    PassRefPtr<MediaValues> create(Frame*, RenderStyle*);
+    static PassOwnPtr<MediaValues> create(Document*);
 
     int getViewportWidth() { return m_viewportWidth; }
     int getViewportHeight() { return m_viewportHeight; }

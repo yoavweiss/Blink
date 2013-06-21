@@ -33,6 +33,7 @@
 #include "core/platform/text/SegmentedString.h"
 #include <wtf/Vector.h>
 
+
 namespace WebCore {
 
 typedef size_t TokenPreloadScannerCheckpoint;
@@ -40,11 +41,12 @@ typedef size_t TokenPreloadScannerCheckpoint;
 class HTMLParserOptions;
 class HTMLTokenizer;
 class SegmentedString;
+class MediaValues;
 
 class TokenPreloadScanner {
     WTF_MAKE_NONCOPYABLE(TokenPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TokenPreloadScanner(const KURL& documentURL);
+    explicit TokenPreloadScanner(const KURL& documentURL, PassOwnPtr<MediaValues> mediaValues);
     ~TokenPreloadScanner();
 
     void scan(const HTMLToken&, const SegmentedString&, PreloadRequestStream& requests);
@@ -90,6 +92,7 @@ private:
     KURL m_predictedBaseElementURL;
     bool m_inStyle;
     size_t m_templateCount;
+    OwnPtr<MediaValues> m_mediaValues;
 
     Vector<Checkpoint> m_checkpoints;
 };
@@ -97,7 +100,7 @@ private:
 class HTMLPreloadScanner {
     WTF_MAKE_NONCOPYABLE(HTMLPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    HTMLPreloadScanner(const HTMLParserOptions&, const KURL& documentURL);
+    HTMLPreloadScanner(const HTMLParserOptions&, const KURL& documentURL, PassOwnPtr<MediaValues> mediaValues);
     ~HTMLPreloadScanner();
 
     void appendToEnd(const SegmentedString&);
