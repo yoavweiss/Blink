@@ -29,6 +29,7 @@
 #include "core/html/parser/HTMLPreloadScanner.h"
 
 #include "HTMLNames.h"
+#include "core/css/MediaList.h"
 #include "core/css/MediaQueryEvaluator.h"
 #include "core/html/InputTypeNames.h"
 #include "core/html/LinkRelAttribute.h"
@@ -36,7 +37,7 @@
 #include "core/html/parser/HTMLTokenizer.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
-
+#include "core/platform/Logging.h"
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -89,13 +90,24 @@ static String initiatorFor(const StringImpl* tagImpl)
     return "unknown";
 }
 
+static bool mediaAttributeMatches(const MediaValues* mediaValues, const String& attributeValue)
+{
+    LOG(Loading, "in mediaAttributeMatches");
+    RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::create(attributeValue);
+    MediaQueryEvaluator mediaQueryEvaluator("screen", mediaValues);
+    return mediaQueryEvaluator.eval(mediaQueries.get());
+}
+
 class TokenPreloadScanner::StartTagScanner {
 public:
-    explicit StartTagScanner(const StringImpl* tagImpl)
+    explicit StartTagScanner(const StringImpl* tagImpl, RefPtr<MediaValues> mediaValues)
         : m_tagImpl(tagImpl)
         , m_linkIsStyleSheet(false)
         , m_inputIsImage(false)
+        , m_mediaMatch(true)
+        , m_mediaValues(mediaValues)//MediaValues::copy(mediaValues))
     {
+    LOG(Loading, "in StartTagScanner constructor");
         if (!match(m_tagImpl, imgTag)
             && !match(m_tagImpl, inputTag)
             && !match(m_tagImpl, linkTag)
@@ -105,6 +117,7 @@ public:
 
     void processAttributes(const HTMLToken::AttributeList& attributes)
     {
+    LOG(Loading, "in processAttributes (Main Thread)");
         ASSERT(isMainThread());
         if (!m_tagImpl)
             return;
@@ -117,6 +130,7 @@ public:
 
     void processAttributes(const Vector<CompactHTMLToken::Attribute>& attributes)
     {
+    LOG(Loading, "in processAttributes");
         if (!m_tagImpl)
             return;
         for (Vector<CompactHTMLToken::Attribute>::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
@@ -125,20 +139,24 @@ public:
 
     PassOwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL, const SegmentedString& source)
     {
-        if (!shouldPreload())
+    LOG(Loading, "createPreloadRequest");
+        if (!shouldPreload() || !m_mediaMatch)
             return nullptr;
 
         TextPosition position = TextPosition(source.currentLine(), source.currentColumn());
-        OwnPtr<PreloadRequest> request = PreloadRequest::create(initiatorFor(m_tagImpl), position, m_urlToLoad, predictedBaseURL, resourceType(), m_mediaAttribute);
+        //OwnPtr<PreloadRequest> request = PreloadRequest::create(initiatorFor(m_tagImpl), position, m_urlToLoad, predictedBaseURL, resourceType(), m_mediaAttribute);
+        OwnPtr<PreloadRequest> request = PreloadRequest::create(initiatorFor(m_tagImpl), position, m_urlToLoad, predictedBaseURL, resourceType(), "");
         request->setCrossOriginModeAllowsCookies(crossOriginModeAllowsCookies());
         request->setCharset(charset());
         return request.release();
     }
 
 private:
+
     template<typename NameType>
     void processAttribute(const NameType& attributeName, const String& attributeValue)
     {
+    LOG(Loading, "in processAttribute");
         if (match(attributeName, charsetAttr))
             m_charset = attributeValue;
 
@@ -153,7 +171,9 @@ private:
             else if (match(attributeName, relAttr))
                 m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
             else if (match(attributeName, mediaAttr))
+    LOG(Loading, "Found media attr in processAttribute");
                 m_mediaAttribute = attributeValue;
+                m_mediaMatch = mediaAttributeMatches(m_mediaValues.get(), attributeValue);
         } else if (match(m_tagImpl, inputTag)) {
             if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
@@ -219,10 +239,12 @@ private:
     String m_crossOriginMode;
     bool m_linkIsStyleSheet;
     String m_mediaAttribute;
+    bool m_mediaMatch;
     bool m_inputIsImage;
+    RefPtr<MediaValues> m_mediaValues;
 };
 
-TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL, PassOwnPtr<MediaValues> mediaValues)
+TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL, RefPtr<MediaValues> mediaValues)
     : m_documentURL(documentURL)
     , m_inStyle(false)
     , m_templateCount(0)
@@ -240,6 +262,7 @@ TokenPreloadScannerCheckpoint TokenPreloadScanner::createCheckpoint()
     m_checkpoints.append(Checkpoint(m_predictedBaseElementURL, m_inStyle, m_templateCount));
     return checkpoint;
 }
+
 
 void TokenPreloadScanner::rewindTo(TokenPreloadScannerCheckpoint checkpointIndex)
 {
@@ -265,6 +288,7 @@ void TokenPreloadScanner::scan(const CompactHTMLToken& token, const SegmentedStr
 template<typename Token>
 void TokenPreloadScanner::scanCommon(const Token& token, const SegmentedString& source, PreloadRequestStream& requests)
 {
+    LOG(Loading, "in scanCommon");
     switch (token.type()) {
     case HTMLToken::Character: {
         if (!m_inStyle)
@@ -306,7 +330,7 @@ void TokenPreloadScanner::scanCommon(const Token& token, const SegmentedString& 
             return;
         }
 
-        StartTagScanner scanner(tagImpl);
+        StartTagScanner scanner(tagImpl, m_mediaValues);
         scanner.processAttributes(token.attributes());
         OwnPtr<PreloadRequest> request = scanner.createPreloadRequest(m_predictedBaseElementURL, source);
         if (request)
@@ -327,7 +351,7 @@ void TokenPreloadScanner::updatePredictedBaseURL(const Token& token)
         m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefAttribute->value)).copy();
 }
 
-HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL, PassOwnPtr<MediaValues> mediaValues)
+HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL, RefPtr<MediaValues> mediaValues)
     : m_scanner(documentURL, mediaValues)
     , m_tokenizer(HTMLTokenizer::create(options))
 {

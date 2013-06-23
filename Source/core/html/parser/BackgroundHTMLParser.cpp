@@ -33,6 +33,7 @@
 #include "core/html/parser/XSSAuditor.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/TextPosition.h>
+#include "core/platform/Logging.h"
 
 namespace WebCore {
 
@@ -119,6 +120,7 @@ void BackgroundHTMLParser::finish()
 
 void BackgroundHTMLParser::stop()
 {
+            LOG(Loading, "Background suiciding");
     delete this;
 }
 
@@ -162,6 +164,7 @@ void BackgroundHTMLParser::pumpTokenizer()
 
             CompactHTMLToken token(m_token.get(), TextPosition(m_input.current().currentLine(), m_input.current().currentColumn()));
 
+            LOG(Loading, "Background gonna scan");
             m_preloadScanner->scan(token, m_input.current(), m_pendingPreloads);
 
             m_pendingTokens->append(token);

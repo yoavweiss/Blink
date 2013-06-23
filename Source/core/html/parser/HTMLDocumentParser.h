@@ -136,7 +136,7 @@ private:
     // CachedResourceClient
     virtual void notifyFinished(CachedResource*);
 
-    void startBackgroundParser(PassOwnPtr<MediaValues>);
+    void startBackgroundParser(RefPtr<MediaValues>);
     void stopBackgroundParser();
     void validateSpeculations(PassOwnPtr<ParsedChunk> lastChunk);
     void discardSpeculationsAndResumeFrom(PassOwnPtr<ParsedChunk> lastChunk, PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>);

@@ -42,7 +42,8 @@ class Document;
 class MediaValues : public RefCounted<MediaValues> {
 public:
     // Should return a pointer that auto destructs when copied
-    static PassOwnPtr<MediaValues> create(Document*);
+    static PassRefPtr<MediaValues> create(Document*);
+    static PassRefPtr<MediaValues> copy(const MediaValues*);
 
     int getViewportWidth() { return m_viewportWidth; }
     int getViewportHeight() { return m_viewportHeight; }
@@ -128,7 +129,7 @@ public:
 
     /** Creates evaluator which evaluates in a thread-safe manner a subset of media values
      */
-    MediaQueryEvaluator(const String& acceptedMediaType, MediaValues* , bool mediaFeatureResult);
+    MediaQueryEvaluator(const String& acceptedMediaType, const MediaValues* , bool mediaFeatureResult);
 
     ~MediaQueryEvaluator();
 

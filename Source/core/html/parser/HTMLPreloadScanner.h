@@ -46,7 +46,7 @@ class MediaValues;
 class TokenPreloadScanner {
     WTF_MAKE_NONCOPYABLE(TokenPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TokenPreloadScanner(const KURL& documentURL, PassOwnPtr<MediaValues> mediaValues);
+    explicit TokenPreloadScanner(const KURL& documentURL, RefPtr<MediaValues> mediaValues);
     ~TokenPreloadScanner();
 
     void scan(const HTMLToken&, const SegmentedString&, PreloadRequestStream& requests);
@@ -92,7 +92,7 @@ private:
     KURL m_predictedBaseElementURL;
     bool m_inStyle;
     size_t m_templateCount;
-    OwnPtr<MediaValues> m_mediaValues;
+    RefPtr<MediaValues> m_mediaValues;
 
     Vector<Checkpoint> m_checkpoints;
 };
@@ -100,7 +100,7 @@ private:
 class HTMLPreloadScanner {
     WTF_MAKE_NONCOPYABLE(HTMLPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    HTMLPreloadScanner(const HTMLParserOptions&, const KURL& documentURL, PassOwnPtr<MediaValues> mediaValues);
+    HTMLPreloadScanner(const HTMLParserOptions&, const KURL& documentURL, RefPtr<MediaValues> mediaValues);
     ~HTMLPreloadScanner();
 
     void appendToEnd(const SegmentedString&);

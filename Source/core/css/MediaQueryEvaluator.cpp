@@ -97,12 +97,12 @@ MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, Frame*
 {
 }
 
-MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, MediaValues* mediaValues, bool mediaFeatureResult)
+MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, const MediaValues* mediaValues, bool mediaFeatureResult)
     : m_mediaType(acceptedMediaType)
     , m_frame(0)
     , m_style(0)
     , m_expResult(mediaFeatureResult)
-    , m_mediaValues(mediaValues)
+    , m_mediaValues(MediaValues::copy(mediaValues))
 {
 }
 
@@ -428,7 +428,10 @@ static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, Rend
             unsigned short type = primitiveValue->primitiveType();
             int factor = 0;
             if (type == CSSPrimitiveValue::CSS_EMS || type == CSSPrimitiveValue::CSS_REMS) {
-                factor = defaultFontSize;
+                if(defaultFontSize>0)
+                    factor = defaultFontSize;
+                else
+                    return false;
             } else if (type == CSSPrimitiveValue::CSS_PX) {
                 factor = 1;
             } else {
@@ -446,6 +449,9 @@ static bool deviceHeightMediaFeatureEval(CSSValue* value, RenderStyle* style, Fr
 {
     if ((!frame || !style) && !mediaValues)
         return expectedValue;
+    int fontSize = 0;
+    if(mediaValues)
+        fontSize = mediaValues->getDefaultFontSize();
 
     if (value) {
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
@@ -453,7 +459,7 @@ static bool deviceHeightMediaFeatureEval(CSSValue* value, RenderStyle* style, Fr
         int length;
         long height = sg.height();
         InspectorInstrumentation::applyScreenHeightOverride(frame, &height);
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, mediaValues->getDefaultFontSize(), length) && compareValue(static_cast<int>(height), length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, fontSize, length) && compareValue(static_cast<int>(height), length, op);
     }
     // ({,min-,max-}device-height)
     // assume if we have a device, assume non-zero
@@ -464,6 +470,9 @@ static bool deviceWidthMediaFeatureEval(CSSValue* value, RenderStyle* style, Fra
 {
     if ((!frame || !style) && !mediaValues)
         return expectedValue;
+    int fontSize = 0;
+    if(mediaValues)
+        fontSize = mediaValues->getDefaultFontSize();
 
     if (value) {
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
@@ -471,7 +480,7 @@ static bool deviceWidthMediaFeatureEval(CSSValue* value, RenderStyle* style, Fra
         int length;
         long width = sg.width();
         InspectorInstrumentation::applyScreenWidthOverride(frame, &width);
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, mediaValues->getDefaultFontSize(), length) && compareValue(static_cast<int>(width), length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, fontSize, length) && compareValue(static_cast<int>(width), length, op);
     }
     // ({,min-,max-}device-width)
     // assume if we have a device, assume non-zero
@@ -482,6 +491,9 @@ static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* f
 {
     if ((!frame || !style) && !mediaValues)
         return expectedValue;
+    int fontSize = 0;
+    if(mediaValues)
+        fontSize = mediaValues->getDefaultFontSize();
 
     FrameView* view = frame->view();
 
@@ -491,7 +503,7 @@ static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* f
             height = adjustForAbsoluteZoom(height, renderView);
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, mediaValues->getDefaultFontSize(), length) && compareValue(height, length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, fontSize, length) && compareValue(height, length, op);
     }
 
     return height;
@@ -501,6 +513,9 @@ static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* fr
 {
     if ((!frame || !style) && !mediaValues)
         return expectedValue;
+    int fontSize = 0;
+    if(mediaValues)
+        fontSize = mediaValues->getDefaultFontSize();
 
     FrameView* view = frame->view();
 
@@ -510,7 +525,7 @@ static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* fr
             width = adjustForAbsoluteZoom(width, renderView);
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, mediaValues->getDefaultFontSize(), length) && compareValue(width, length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, fontSize, length) && compareValue(width, length, op);
     }
 
     return width;
@@ -822,7 +837,7 @@ bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
     return false;
 }
 
-PassOwnPtr<MediaValues> MediaValues::create(Document* document) {
+PassRefPtr<MediaValues> MediaValues::create(Document* document) {
     ASSERT(document->frame());
     ASSERT(document->renderer());
     ASSERT(document->renderer()->style());
@@ -851,7 +866,7 @@ PassOwnPtr<MediaValues> MediaValues::create(Document* document) {
         colorBitsPerComponent = bitsPerComponent;
     PointerDeviceType pointer = leastCapablePrimaryPointerDeviceType(frame);
 
-    return adoptPtr(new MediaValues(viewportWidth,
+    return adoptRef(new MediaValues(viewportWidth,
         viewportHeight,
         deviceWidth,
         deviceHeight,
@@ -862,6 +877,19 @@ PassOwnPtr<MediaValues> MediaValues::create(Document* document) {
         defaultFontSize,
         threeDEnabled,
         mediaType));
+}
+PassRefPtr<MediaValues> MediaValues::copy(const MediaValues* mediaValues) {
+    return adoptRef(new MediaValues(mediaValues->m_viewportWidth,
+        mediaValues->m_viewportHeight,
+        mediaValues->m_deviceWidth,
+        mediaValues->m_deviceHeight,
+        mediaValues->m_pixelRatio,
+        mediaValues->m_colorBitsPerComponent,
+        mediaValues->m_monochromeBitsPerComponent,
+        mediaValues->m_pointer,
+        mediaValues->m_defaultFontSize,
+        mediaValues->m_threeDEnabled,
+        mediaValues->m_mediaType));
 }
 
 } // namespace
