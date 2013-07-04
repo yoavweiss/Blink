@@ -43,7 +43,6 @@
 #include "core/html/parser/HTMLTreeBuilder.h"
 #include "core/inspector/InspectorInstrumentation.h"
 #include "core/page/Frame.h"
-#include "core/platform/Logging.h"
 #include <wtf/Functional.h>
 
 namespace WebCore {
@@ -149,7 +148,6 @@ void HTMLDocumentParser::detach()
     m_treeBuilder->detach();
     // FIXME: It seems wrong that we would have a preload scanner here.
     // Yet during fast/dom/HTMLScriptElement/script-load-events.html we do.
-    LOG(Loading, "Cleaning up preloadScanner");
     m_preloadScanner.clear();
     m_insertionPreloadScanner.clear();
     m_parserScheduler.clear(); // Deleting the scheduler will clear any timers.
@@ -481,7 +479,6 @@ void HTMLDocumentParser::forcePlaintextForTextDocument()
     if (shouldUseThreading()) {
         // This method is called before any data is appended, so we have to start
         // the background parser ourselves.
-        LOG(Loading, "Kickig off background thread");
         if (!m_haveBackgroundParser)
             startBackgroundParser(0);//MediaValues::create(document()));
 
@@ -553,8 +550,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     if (isWaitingForScripts()) {
         ASSERT(m_tokenizer->state() == HTMLTokenizer::DataState);
         if (!m_preloadScanner) {
-            LOG(Loading, "Creating preloadscanner");
-            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), 0));//MediaValues::create(document())));
+            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), MediaValues::create(document())));
             m_preloadScanner->appendToEnd(m_input.current());
         }
         m_preloadScanner->scan(m_preloader.get(), document()->baseElementURL());
@@ -629,7 +625,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
         // Check the document.write() output with a separate preload scanner as
         // the main scanner can't deal with insertions.
         if (!m_insertionPreloadScanner)
-            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), 0));//MediaValues::create(document())));
+            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), MediaValues::create(document())));
         m_insertionPreloadScanner->appendToEnd(source);
         m_insertionPreloadScanner->scan(m_preloader.get(), document()->baseElementURL());
     }
@@ -656,7 +652,6 @@ void HTMLDocumentParser::startBackgroundParser(RefPtr<MediaValues> mediaValues)
     // TODO - create and pass media values here
     // Make sure we're on the main thread, and get frame and style to create them
     // Pass MediaValues to the TokenPreloadScanner directly
-        LOG(Loading, "Creating a TokenPreloadScanner in startBackgroundParser");
     config->preloadScanner = adoptPtr(new TokenPreloadScanner(document()->url().copy(), mediaValues));
 
     ASSERT(config->xssAuditor->isSafeToSendToAnotherThread());
@@ -681,7 +676,6 @@ void HTMLDocumentParser::append(PassRefPtr<StringImpl> inputSource)
 
     if (shouldUseThreading()) {
         if (!m_haveBackgroundParser) {
-        LOG(Loading, "Kickig off background thread in append");
             startBackgroundParser(MediaValues::create(document()));
         }
 

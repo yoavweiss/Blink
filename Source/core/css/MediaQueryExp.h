@@ -33,7 +33,6 @@
 #include "core/css/MediaFeatureNames.h"
 #include "wtf/PassOwnPtr.h"
 #include "wtf/RefPtr.h"
-#include "wtf/text/AtomicString.h"
 
 namespace WebCore {
 class CSSParserValueList;
@@ -41,10 +40,10 @@ class CSSParserValueList;
 class MediaQueryExp {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<MediaQueryExp> create(const AtomicString& mediaFeature, CSSParserValueList*);
+    static PassOwnPtr<MediaQueryExp> create(const String& mediaFeature, CSSParserValueList*);
     ~MediaQueryExp();
 
-    AtomicString mediaFeature() const { return m_mediaFeature; }
+    String mediaFeature() const { return m_mediaFeature; }
 
     CSSValue* value() const { return m_value.get(); }
 
@@ -64,9 +63,9 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
-    MediaQueryExp(const AtomicString& mediaFeature, PassRefPtr<CSSValue>);
+    MediaQueryExp(const String& mediaFeature, PassRefPtr<CSSValue>);
 
-    AtomicString m_mediaFeature;
+    String m_mediaFeature;
     RefPtr<CSSValue> m_value;
 };
 

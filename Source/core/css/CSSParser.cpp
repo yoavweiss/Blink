@@ -10813,7 +10813,7 @@ CSSParserValue& CSSParser::sinkFloatingValue(CSSParserValue& value)
     return value;
 }
 
-MediaQueryExp* CSSParser::createFloatingMediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* values)
+MediaQueryExp* CSSParser::createFloatingMediaQueryExp(const String& mediaFeature, CSSParserValueList* values)
 {
     m_floatingMediaQueryExp = MediaQueryExp::create(mediaFeature, values);
     return m_floatingMediaQueryExp.get();

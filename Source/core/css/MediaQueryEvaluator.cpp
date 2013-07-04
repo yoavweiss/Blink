@@ -59,7 +59,7 @@ using namespace MediaFeatureNames;
 enum MediaFeaturePrefix { MinPrefix, MaxPrefix, NoPrefix };
 
 typedef bool (*EvalFunc)(CSSValue*, RenderStyle*, Frame*, MediaFeaturePrefix, MediaValues*, bool);
-typedef HashMap<AtomicStringImpl*, EvalFunc> FunctionMap;
+typedef HashMap<StringImpl*, EvalFunc> FunctionMap;
 static FunctionMap* gFunctionMap;
 
 MediaQueryEvaluator::MediaQueryEvaluator(bool mediaFeatureResult)
@@ -161,8 +161,9 @@ bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* sty
             // assume true if we are at the end of the list,
             // otherwise assume false
             result = applyRestrictor(query->restrictor(), exps->size() == j);
-        } else
+        } else {
             result = applyRestrictor(query->restrictor(), false);
+        }
     }
 
     return result;
@@ -454,12 +455,20 @@ static bool deviceHeightMediaFeatureEval(CSSValue* value, RenderStyle* style, Fr
         fontSize = mediaValues->getDefaultFontSize();
 
     if (value) {
-        FloatRect sg = screenRect(frame->page()->mainFrame()->view());
-        RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
+        RenderStyle* rootStyle;
+        long height;
         int length;
-        long height = sg.height();
+        bool inStrictMode = true;
+        if (frame) {
+            FloatRect sg = screenRect(frame->page()->mainFrame()->view());
+            rootStyle = frame->document()->documentElement()->renderStyle();
+            height = sg.height();
+            inStrictMode = !frame->document()->inQuirksMode();
+        } else {
+            height = mediaValues->getDeviceHeight();
+        }
         InspectorInstrumentation::applyScreenHeightOverride(frame, &height);
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, fontSize, length) && compareValue(static_cast<int>(height), length, op);
+        return computeLength(value, inStrictMode, style, rootStyle, fontSize, length) && compareValue(static_cast<int>(height), length, op);
     }
     // ({,min-,max-}device-height)
     // assume if we have a device, assume non-zero
@@ -475,12 +484,20 @@ static bool deviceWidthMediaFeatureEval(CSSValue* value, RenderStyle* style, Fra
         fontSize = mediaValues->getDefaultFontSize();
 
     if (value) {
-        FloatRect sg = screenRect(frame->page()->mainFrame()->view());
-        RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
+        RenderStyle* rootStyle;
+        long width;
         int length;
-        long width = sg.width();
+        bool inStrictMode = true;
+        if (frame) {
+            FloatRect sg = screenRect(frame->page()->mainFrame()->view());
+            rootStyle = frame->document()->documentElement()->renderStyle();
+            width = sg.width();
+            inStrictMode = !frame->document()->inQuirksMode();
+        } else {
+            width = mediaValues->getDeviceWidth();
+        }
         InspectorInstrumentation::applyScreenWidthOverride(frame, &width);
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, fontSize, length) && compareValue(static_cast<int>(width), length, op);
+        return computeLength(value, inStrictMode, style, rootStyle, fontSize, length) && compareValue(static_cast<int>(width), length, op);
     }
     // ({,min-,max-}device-width)
     // assume if we have a device, assume non-zero
@@ -499,11 +516,17 @@ static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* f
 
     int height = viewportSize(view).height();
     if (value) {
-        if (RenderView* renderView = frame->document()->renderView())
-            height = adjustForAbsoluteZoom(height, renderView);
-        RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
+        RenderView* renderView = 0;
+        RenderStyle* rootStyle = 0;
+        bool inStrictMode = true;
+        if (frame) {
+            if (renderView = frame->document()->renderView())
+                height = adjustForAbsoluteZoom(height, renderView);
+            rootStyle = frame->document()->documentElement()->renderStyle();
+            inStrictMode = !frame->document()->inQuirksMode();
+        }
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, fontSize, length) && compareValue(height, length, op);
+        return computeLength(value, inStrictMode, style, rootStyle, fontSize, length) && compareValue(height, length, op);
     }
 
     return height;
@@ -514,18 +537,29 @@ static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* fr
     if ((!frame || !style) && !mediaValues)
         return expectedValue;
     int fontSize = 0;
+    int width;
     if(mediaValues)
         fontSize = mediaValues->getDefaultFontSize();
 
-    FrameView* view = frame->view();
+    if(frame){
+        FrameView* view = frame->view();
+        width = viewportSize(view).width();
+    } else {
+        width = mediaValues->getViewportWidth();
+    }
 
-    int width = viewportSize(view).width();
     if (value) {
-        if (RenderView* renderView = frame->document()->renderView())
-            width = adjustForAbsoluteZoom(width, renderView);
-        RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
+        RenderView* renderView = 0;
+        RenderStyle* rootStyle = 0;
+        bool inStrictMode = true;
+        if (frame) {
+            if (renderView = frame->document()->renderView())
+                width = adjustForAbsoluteZoom(width, renderView);
+            rootStyle = frame->document()->documentElement()->renderStyle();
+            inStrictMode = !frame->document()->inQuirksMode();
+        }
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, fontSize, length) && compareValue(width, length, op);
+        return computeLength(value, inStrictMode, style, rootStyle, fontSize, length) && compareValue(width, length, op);
     }
 
     return width;
@@ -846,6 +880,7 @@ PassRefPtr<MediaValues> MediaValues::create(Document* document) {
 
     // get the values from Frame and Style
     FrameView* view = frame->view();
+    RenderView* renderView = frame->document()->renderView();
     int viewportWidth = viewportSize(view).width();
     int viewportHeight = viewportSize(view).height();
     FloatRect sg = screenRect(frame->page()->mainFrame()->view());
@@ -858,8 +893,12 @@ PassRefPtr<MediaValues> MediaValues::create(Document* document) {
     int defaultFontSize = style->fontDescription().specifiedSize();
     bool threeDEnabled = false;
     String mediaType = frame->view()->mediaType();
+    if (renderView) {
+        viewportWidth = adjustForAbsoluteZoom(viewportWidth, renderView);
+        viewportHeight = adjustForAbsoluteZoom(viewportHeight, renderView);
+    }
     if (RenderView* view = frame->contentRenderer())
-        threeDEnabled= view->compositor()->canRender3DTransforms();
+        threeDEnabled = view->compositor()->canRender3DTransforms();
     if (screenIsMonochrome(frame->page()->mainFrame()->view()))
         monochromeBitsPerComponent = bitsPerComponent;
     else

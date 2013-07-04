@@ -37,7 +37,6 @@
 #include "core/html/parser/HTMLTokenizer.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
-#include "core/platform/Logging.h"
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -92,10 +91,10 @@ static String initiatorFor(const StringImpl* tagImpl)
 
 static bool mediaAttributeMatches(const MediaValues* mediaValues, const String& attributeValue)
 {
-    LOG(Loading, "in mediaAttributeMatches");
     RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::create(attributeValue);
-    MediaQueryEvaluator mediaQueryEvaluator("screen", mediaValues);
-    return mediaQueryEvaluator.eval(mediaQueries.get());
+    MediaQueryEvaluator mediaQueryEvaluator("screen", mediaValues, false);
+    bool ret = mediaQueryEvaluator.eval(mediaQueries.get());
+    return ret;
 }
 
 class TokenPreloadScanner::StartTagScanner {
@@ -107,7 +106,6 @@ public:
         , m_mediaMatch(true)
         , m_mediaValues(mediaValues)//MediaValues::copy(mediaValues))
     {
-    LOG(Loading, "in StartTagScanner constructor");
         if (!match(m_tagImpl, imgTag)
             && !match(m_tagImpl, inputTag)
             && !match(m_tagImpl, linkTag)
@@ -117,7 +115,6 @@ public:
 
     void processAttributes(const HTMLToken::AttributeList& attributes)
     {
-    LOG(Loading, "in processAttributes (Main Thread)");
         ASSERT(isMainThread());
         if (!m_tagImpl)
             return;
@@ -130,7 +127,6 @@ public:
 
     void processAttributes(const Vector<CompactHTMLToken::Attribute>& attributes)
     {
-    LOG(Loading, "in processAttributes");
         if (!m_tagImpl)
             return;
         for (Vector<CompactHTMLToken::Attribute>::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
@@ -139,7 +135,6 @@ public:
 
     PassOwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL, const SegmentedString& source)
     {
-    LOG(Loading, "createPreloadRequest");
         if (!shouldPreload() || !m_mediaMatch)
             return nullptr;
 
@@ -156,7 +151,6 @@ private:
     template<typename NameType>
     void processAttribute(const NameType& attributeName, const String& attributeValue)
     {
-    LOG(Loading, "in processAttribute");
         if (match(attributeName, charsetAttr))
             m_charset = attributeValue;
 
@@ -170,10 +164,10 @@ private:
                 setUrlToLoad(attributeValue);
             else if (match(attributeName, relAttr))
                 m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
-            else if (match(attributeName, mediaAttr))
-    LOG(Loading, "Found media attr in processAttribute");
+            else if (match(attributeName, mediaAttr)) {
                 m_mediaAttribute = attributeValue;
                 m_mediaMatch = mediaAttributeMatches(m_mediaValues.get(), attributeValue);
+            }
         } else if (match(m_tagImpl, inputTag)) {
             if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
@@ -288,7 +282,6 @@ void TokenPreloadScanner::scan(const CompactHTMLToken& token, const SegmentedStr
 template<typename Token>
 void TokenPreloadScanner::scanCommon(const Token& token, const SegmentedString& source, PreloadRequestStream& requests)
 {
-    LOG(Loading, "in scanCommon");
     switch (token.type()) {
     case HTMLToken::Character: {
         if (!m_inStyle)
