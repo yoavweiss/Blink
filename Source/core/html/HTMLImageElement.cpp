@@ -32,6 +32,7 @@
 #include "core/html/HTMLAnchorElement.h"
 #include "core/html/HTMLFormElement.h"
 #include "core/html/parser/HTMLParserIdioms.h"
+#include "core/page/Page.h"
 #include "core/rendering/RenderImage.h"
 
 using namespace std;
@@ -107,13 +108,23 @@ void HTMLImageElement::collectStyleForPresentationAttribute(const QualifiedName&
         HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
+const AtomicString HTMLImageElement::imageSourceURL() const
+{
+    return m_bestFitImageURL.isEmpty() ? fastGetAttribute(srcAttr) : m_bestFitImageURL;
+}
+
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == altAttr) {
         if (renderer() && renderer()->isImage())
             toRenderImage(renderer())->updateAltText();
-    } else if (name == srcAttr)
+    } else if (name == srcAttr || name == srcsetAttr) {
+        float deviceScaleFactor = 1.0;
+        if (Page* page = document().page())
+            deviceScaleFactor = page->deviceScaleFactor();
+        m_bestFitImageURL = bestFitSourceForImageAttributes(deviceScaleFactor, fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
         m_imageLoader.updateFromElementIgnoringPreviousError();
+    }
     else if (name == usemapAttr)
         setIsLink(!value.isNull());
     else if (name == onbeforeloadAttr)

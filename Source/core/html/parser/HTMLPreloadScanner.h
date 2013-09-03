@@ -44,7 +44,7 @@ class SegmentedString;
 class TokenPreloadScanner {
     WTF_MAKE_NONCOPYABLE(TokenPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TokenPreloadScanner(const KURL& documentURL);
+    explicit TokenPreloadScanner(const KURL& documentURL, float deviceScaleFactor = 1.0);
     ~TokenPreloadScanner();
 
     void scan(const HTMLToken&, const SegmentedString&, PreloadRequestStream& requests);
@@ -89,6 +89,7 @@ private:
     const KURL m_documentURL;
     KURL m_predictedBaseElementURL;
     bool m_inStyle;
+    float m_deviceScaleFactor;
     size_t m_templateCount;
 
     Vector<Checkpoint> m_checkpoints;
@@ -97,7 +98,7 @@ private:
 class HTMLPreloadScanner {
     WTF_MAKE_NONCOPYABLE(HTMLPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    HTMLPreloadScanner(const HTMLParserOptions&, const KURL& documentURL);
+    HTMLPreloadScanner(const HTMLParserOptions&, const KURL& documentURL, float deviceScaleFactor = 1.0);
     ~HTMLPreloadScanner();
 
     void appendToEnd(const SegmentedString&);

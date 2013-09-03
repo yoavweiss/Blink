@@ -90,10 +90,11 @@ static String initiatorFor(const StringImpl* tagImpl)
 
 class TokenPreloadScanner::StartTagScanner {
 public:
-    explicit StartTagScanner(const StringImpl* tagImpl)
+    explicit StartTagScanner(const StringImpl* tagImpl, float deviceScaleFactor = 1.0)
         : m_tagImpl(tagImpl)
         , m_linkIsStyleSheet(false)
         , m_inputIsImage(false)
+        , m_deviceScaleFactor(deviceScaleFactor)
     {
         if (!match(m_tagImpl, imgTag)
             && !match(m_tagImpl, inputTag)
@@ -112,6 +113,12 @@ public:
             String attributeValue = StringImpl::create8BitIfPossible(iter->value);
             processAttribute(attributeName, attributeValue);
         }
+
+        // Resolve between src and srcSet if we have them.
+        if (!m_srcSetAttribute.isEmpty()) {
+            String srcMatchingScale = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute);
+            setUrlToLoad(srcMatchingScale, true);
+        }
     }
 
     void processAttributes(const Vector<CompactHTMLToken::Attribute>& attributes)
@@ -120,6 +127,12 @@ public:
             return;
         for (Vector<CompactHTMLToken::Attribute>::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
             processAttribute(iter->name, iter->value);
+
+        // Resolve between src and srcSet if we have them.
+        if (!m_srcSetAttribute.isEmpty()) {
+            String srcMatchingScale = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute);
+            setUrlToLoad(srcMatchingScale, true);
+        }
     }
 
     PassOwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL, const SegmentedString& source)
@@ -168,13 +181,16 @@ private:
         return rel.isStyleSheet() && !rel.isAlternate() && rel.iconType() == InvalidIcon && !rel.isDNSPrefetch();
     }
 
-    void setUrlToLoad(const String& attributeValue)
+    void setUrlToLoad(const String& value, bool allowReplacement = false)
     {
         // We only respect the first src/href, per HTML5:
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#attribute-name-state
-        if (!m_urlToLoad.isEmpty())
+        if (!allowReplacement && !m_urlToLoad.isEmpty())
             return;
-        m_urlToLoad = stripLeadingAndTrailingHTMLSpaces(attributeValue);
+        String url = stripLeadingAndTrailingHTMLSpaces(value);
+        if (url.isEmpty())
+            return;
+        m_urlToLoad = url;
     }
 
     const String& charset() const
@@ -215,16 +231,19 @@ private:
 
     const StringImpl* m_tagImpl;
     String m_urlToLoad;
+    String m_srcSetAttribute;
     String m_charset;
     String m_crossOriginMode;
     bool m_linkIsStyleSheet;
     String m_mediaAttribute;
     bool m_inputIsImage;
+    float m_deviceScaleFactor;
 };
 
-TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL)
+TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL, float deviceScaleFactor)
     : m_documentURL(documentURL)
     , m_inStyle(false)
+    , m_deviceScaleFactor(deviceScaleFactor)
     , m_templateCount(0)
 {
 }
@@ -305,7 +324,7 @@ void TokenPreloadScanner::scanCommon(const Token& token, const SegmentedString& 
             return;
         }
 
-        StartTagScanner scanner(tagImpl);
+        StartTagScanner scanner(tagImpl, m_deviceScaleFactor);
         scanner.processAttributes(token.attributes());
         OwnPtr<PreloadRequest> request = scanner.createPreloadRequest(m_predictedBaseElementURL, source);
         if (request)
@@ -326,8 +345,8 @@ void TokenPreloadScanner::updatePredictedBaseURL(const Token& token)
         m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefAttribute->value)).copy();
 }
 
-HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL)
-    : m_scanner(documentURL)
+HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL, float deviceScaleFactor)
+    : m_scanner(documentURL, deviceScaleFactor)
     , m_tokenizer(HTMLTokenizer::create(options))
 {
 }
