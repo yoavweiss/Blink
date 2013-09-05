@@ -465,8 +465,10 @@ public:
 
     FrameView* view() const; // can be NULL
     Frame* frame() const { return m_frame; } // can be NULL
-    Page* page() const; // can be NULL
     Settings* settings() const; // can be NULL
+    Page* page() const; // can be NULL
+
+    float devicePixelRatio() const;
 
     PassRefPtr<Range> createRange();
 

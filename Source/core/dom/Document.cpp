@@ -5317,6 +5317,14 @@ void Document::didAssociateFormControlsTimerFired(Timer<Document>* timer)
     m_associatedFormControls.clear();
 }
 
+float Document::devicePixelRatio() const
+{
+    float devicePixelRatio = 1.0;
+    if (m_frame)
+        devicePixelRatio = m_frame->devicePixelRatio();
+    return devicePixelRatio;
+}
+
 PassOwnPtr<LifecycleNotifier> Document::createLifecycleNotifier()
 {
     return DocumentLifecycleNotifier::create(this);
