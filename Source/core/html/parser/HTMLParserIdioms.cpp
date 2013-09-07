@@ -29,7 +29,7 @@
 #include "core/dom/QualifiedName.h"
 #include "core/html/parser/HTMLIdentifier.h"
 #include "core/platform/Decimal.h"
-#include "weborigin/KURL.h"
+#include "core/platform/text/DecodeEscapeSequences.h"
 #include "wtf/MathExtras.h"
 #include "wtf/text/AtomicString.h"
 #include "wtf/text/StringBuilder.h"
@@ -340,7 +340,7 @@ String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& sr
             continue;
 
         ImageWithScale image;
-        image.imageURL = decodeURLEscapeSequences(data[0]);
+        image.imageURL = decodeEscapeSequences<URLEscapeSequence>(data[0], UTF8Encoding());
         image.scaleFactor = imgScaleFactor;
 
         imageCandidates.append(image);
@@ -349,7 +349,7 @@ String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& sr
     const String src =  srcAttribute.simplifyWhiteSpace(isHTMLSpace);
     if (!src.isEmpty()) {
         ImageWithScale image;
-        image.imageURL = decodeURLEscapeSequences(src);
+        image.imageURL = decodeEscapeSequences<URLEscapeSequence>(src, UTF8Encoding());
         image.scaleFactor = 1.0;
 
         imageCandidates.append(image);

@@ -465,8 +465,8 @@ public:
 
     FrameView* view() const; // can be null
     Frame* frame() const { return m_frame; } // can be null
-    Settings* settings() const; // can be null
     Page* page() const; // can be null
+    Settings* settings() const; // can be null
 
     float devicePixelRatio() const;
 
