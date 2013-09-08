@@ -20,8 +20,6 @@
  
 
 [
-    Conditional=PICTURE,
-    SkipVTableValidation
 ] interface HTMLPictureElement : HTMLElement {
     [Reflect] attribute DOMString name;
     [Reflect] attribute DOMString align;
