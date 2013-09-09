@@ -26,9 +26,7 @@
 #include "config.h"
 #include "core/html/HTMLSourceElement.h"
 
-#if ENABLE(PICTURE)
 #include "HTMLPictureElement.h"
-#endif
 #include "HTMLNames.h"
 #include "core/dom/Event.h"
 #include "core/dom/EventNames.h"

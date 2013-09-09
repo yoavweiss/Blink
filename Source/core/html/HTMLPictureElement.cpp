@@ -21,13 +21,12 @@
  */
 
 #include "config.h"
-#if ENABLE(PICTURE)
 #include "HTMLImageElement.h"
 #include "HTMLPictureElement.h"
 
 #include "core/css/MediaList.h"
 #include "core/css/MediaQueryEvaluator.h"
-#include "core/css/StyleResolver.h"
+#include "core/css/resolver/StyleResolver.h"
 
 using namespace std;
 
@@ -35,19 +34,19 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLPictureElement::HTMLPictureElement(const QualifiedName& tagName, Document* document)
+HTMLPictureElement::HTMLPictureElement(const QualifiedName& tagName, Document& document)
     : HTMLImageElement(tagName, document, NULL),
       m_hasSrc(false)
 {
     ASSERT(hasTagName(pictureTag));
 }
 
-PassRefPtr<HTMLPictureElement> HTMLPictureElement::create(Document* document)
+PassRefPtr<HTMLPictureElement> HTMLPictureElement::create(Document& document)
 {
     return adoptRef(new HTMLPictureElement(imgTag, document));
 }
 
-PassRefPtr<HTMLPictureElement> HTMLPictureElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLPictureElement> HTMLPictureElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLPictureElement(tagName, document));
 }
@@ -56,7 +55,7 @@ HTMLPictureElement::~HTMLPictureElement()
 {
 }
 
-PassRefPtr<HTMLPictureElement> HTMLPictureElement::createForJSConstructor(Document* document, const int* optionalWidth, const int* optionalHeight)
+PassRefPtr<HTMLPictureElement> HTMLPictureElement::createForJSConstructor(Document& document, const int* optionalWidth, const int* optionalHeight)
 {
     RefPtr<HTMLPictureElement> picture = adoptRef(new HTMLPictureElement(imgTag, document));
     if (optionalWidth)
@@ -78,13 +77,14 @@ const Element* HTMLPictureElement::getMatchingSource() const{
             if (node && (node->hasTagName(sourceTag)) && (node->parentNode() == this)){
                 HTMLSourceElement* source = static_cast<HTMLSourceElement*>(node);
                 Document* document = documentInternal();
+                ASSERT(Document->renderer());
+                ASSERT(Document->renderer()->style());
                 if (source->fastHasAttribute(srcAttr)) {
                     if (!source->fastHasAttribute(mediaAttr)) {
                         return source;
                     }
-                    RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(source->media());
-                    RefPtr<RenderStyle> documentStyle = StyleResolver::styleForDocument(document, 0);
-                    MediaQueryEvaluator mediaQueryEvaluator("screen", document->frame(), documentStyle.get());
+                    RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::create(source->media());
+                    MediaQueryEvaluator mediaQueryEvaluator("screen", document->frame(), document->renderer()->style());
                     if(mediaQueryEvaluator.eval(mediaQueries.get())){
                         return source;
                     }
@@ -109,4 +109,3 @@ void HTMLPictureElement::parseAttribute(const QualifiedName& name, const AtomicS
 }
 
 }
-#endif

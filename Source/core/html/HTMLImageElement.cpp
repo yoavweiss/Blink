@@ -47,9 +47,9 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     , m_compositeOperator(CompositeSourceOver)
 {
     ASSERT((hasTagName(imgTag)) 
-#if ENABLE(PICTURE)
+//#if ENABLE(PICTURE)
         || (hasTagName(pictureTag))
-#endif
+//#endif
         );
     ScriptWrappable::init(this);
     if (form)

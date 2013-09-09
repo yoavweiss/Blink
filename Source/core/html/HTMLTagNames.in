@@ -68,7 +68,7 @@ i interfaceName=HTMLElement
 iframe interfaceName=HTMLIFrameElement
 image mapToTagName=img
 img interfaceName=HTMLImageElement, constructorNeedsFormElement
-picture interfaceName=HTMLPictureElement, conditional=PICTURE
+picture interfaceName=HTMLPictureElement
 input constructorNeedsFormElement, constructorNeedsCreatedByParser
 ins interfaceName=HTMLModElement
 isindex interfaceName=HTMLUnknownElement

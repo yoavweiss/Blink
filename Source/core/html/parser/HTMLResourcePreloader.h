@@ -47,7 +47,7 @@ public:
 
     static PassOwnPtr<PreloadRequest> create(bool bundleStart, bool bundleEnd)
     {
-        return adoptPtr(new PreloadRequest(String(), TextPosition(), String(), KURL(), CachedResource::RawResource, String(), bundleStart, bundleEnd));
+        return adoptPtr(new PreloadRequest(String(), TextPosition(), String(), KURL(), Resource::Raw, String(), bundleStart, bundleEnd));
     }
 
     bool isSafeToSendToAnotherThread() const;
@@ -69,7 +69,7 @@ private:
         const TextPosition& initiatorPosition, 
         const String& resourceURL, 
         const KURL& baseURL, 
-        CachedResource::Type resourceType, 
+        Resource::Type resourceType, 
         const String& mediaAttribute,
         bool bundleStart,
         bool bundleEnd)

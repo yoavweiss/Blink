@@ -30,9 +30,9 @@
 namespace WebCore {
 
 class HTMLPictureElement : public HTMLImageElement {
-    HTMLPictureElement(const QualifiedName& tagName, Document* document);
+    HTMLPictureElement(const QualifiedName& tagName, Document& document);
     ~HTMLPictureElement();
-    const AtomicString& imageSourceURL() const { return getMatchingSource()->getAttribute(HTMLNames::srcAttr); }
+    const AtomicString imageSourceURL() const { return getMatchingSource()->getAttribute(HTMLNames::srcAttr); }
     const Element* getMatchingSource() const;
 
     virtual bool isPictureElement() const { return true; }
@@ -41,10 +41,10 @@ class HTMLPictureElement : public HTMLImageElement {
     bool m_hasSrc;
 
 public:
-    static PassRefPtr<HTMLPictureElement> create(Document* document);
+    static PassRefPtr<HTMLPictureElement> create(Document& document);
 
-    static PassRefPtr<HTMLPictureElement> create(const QualifiedName& tagName, Document* document);
-    static PassRefPtr<HTMLPictureElement> createForJSConstructor(Document* document, const int* optionalWidth, const int* optionalHeight);
+    static PassRefPtr<HTMLPictureElement> create(const QualifiedName& tagName, Document& document);
+    static PassRefPtr<HTMLPictureElement> createForJSConstructor(Document& document, const int* optionalWidth, const int* optionalHeight);
     void sourceWasAdded();
 
 };
