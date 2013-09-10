@@ -29,6 +29,7 @@
 #include "core/html/parser/HTMLPreloadScanner.h"
 
 #include "HTMLNames.h"
+#include "RuntimeEnabledFeatures.h"
 #include "core/html/InputTypeNames.h"
 #include "core/html/LinkRelAttribute.h"
 #include "core/html/parser/HTMLParserIdioms.h"
@@ -129,7 +130,7 @@ public:
             processAttribute(iter->name, iter->value);
 
         // Resolve between src and srcSet if we have them.
-        if (!m_srcSetAttribute.isEmpty()) {
+        if (RuntimeEnabledFeatures::srcsetEnabled() && !m_srcSetAttribute.isEmpty()) {
             String srcMatchingScale = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute);
             setUrlToLoad(srcMatchingScale, true);
         }

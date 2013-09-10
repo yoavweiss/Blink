@@ -25,6 +25,7 @@
 
 #include "CSSPropertyNames.h"
 #include "HTMLNames.h"
+#include "RuntimeEnabledFeatures.h"
 #include "bindings/v8/ScriptEventListener.h"
 #include "core/dom/Attribute.h"
 #include "core/dom/EventNames.h"
@@ -118,7 +119,8 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         if (renderer() && renderer()->isImage())
             toRenderImage(renderer())->updateAltText();
     } else if (name == srcAttr || name == srcsetAttr) {
-        m_bestFitImageURL = bestFitSourceForImageAttributes(document().devicePixelRatio(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
+        if (RuntimeEnabledFeatures::srcsetEnabled())
+            m_bestFitImageURL = bestFitSourceForImageAttributes(document().devicePixelRatio(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
         m_imageLoader.updateFromElementIgnoringPreviousError();
     }
     else if (name == usemapAttr)

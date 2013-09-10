@@ -82,6 +82,7 @@ ShadowDOM status=experimental
 SharedWorker custom
 SpeechInput status=stable
 SpeechSynthesis status=experimental
+Srcset status=experimental
 Stream status=experimental
 StyleScoped status=experimental
 SVGPaintOrder status=experimental
