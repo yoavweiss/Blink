@@ -104,6 +104,14 @@ public:
             m_tagImpl = 0;
     }
 
+    void applySrcset()
+    {
+        // Resolve between src and srcSet if we have them.
+        if (RuntimeEnabledFeatures::srcsetEnabled() && !m_srcSetAttribute.isEmpty()) {
+            setUrlToLoad(bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute), true);
+        }
+    }
+
     void processAttributes(const HTMLToken::AttributeList& attributes)
     {
         ASSERT(isMainThread());
@@ -115,11 +123,7 @@ public:
             processAttribute(attributeName, attributeValue);
         }
 
-        // Resolve between src and srcSet if we have them.
-        if (!m_srcSetAttribute.isEmpty()) {
-            String srcMatchingScale = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute);
-            setUrlToLoad(srcMatchingScale, true);
-        }
+        applySrcset();
     }
 
     void processAttributes(const Vector<CompactHTMLToken::Attribute>& attributes)
@@ -129,11 +133,7 @@ public:
         for (Vector<CompactHTMLToken::Attribute>::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
             processAttribute(iter->name, iter->value);
 
-        // Resolve between src and srcSet if we have them.
-        if (RuntimeEnabledFeatures::srcsetEnabled() && !m_srcSetAttribute.isEmpty()) {
-            String srcMatchingScale = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute);
-            setUrlToLoad(srcMatchingScale, true);
-        }
+        applySrcset();
     }
 
     PassOwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL, const SegmentedString& source)
