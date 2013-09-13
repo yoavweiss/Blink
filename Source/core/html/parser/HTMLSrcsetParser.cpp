@@ -3,8 +3,9 @@
 // found in the LICENSE file.
 
 #include "config.h"
-#include "core/html/parser/HTMLParserIdioms.h"
 #include "core/html/parser/HTMLSrcsetParser.h"
+
+#include "core/html/parser/HTMLParserIdioms.h"
 #include "core/platform/text/DecodeEscapeSequences.h"
 
 namespace WebCore {
@@ -48,7 +49,7 @@ static inline bool isHTMLSpaceOrComma(UChar character)
 }
 
 // See the specifications for more details about the algorithm to follow.
-// http://www.w3.org/TR/2013/WD-html-srcset-20130228/#processing-the-image-candidates.
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/embedded-content-1.html#processing-the-image-candidates
 static void parseImagesWithScaleFromSrcSetAttribute(const String& srcSetAttribute, ImageCandidates& imageCandidates)
 {
     size_t imageCandidateStart = 0;
@@ -78,11 +79,11 @@ static void parseImagesWithScaleFromSrcSetAttribute(const String& srcSetAttribut
         } else {
             // 7. Collect a sequence of characters that are not "," (U+002C) characters, and let that be descriptors.
             size_t imageScaleStart = srcSetAttribute.find(isNotHTMLSpace, imageUrlEnd + 1);
-            if (imageScaleStart == notFound)
+            if (imageScaleStart == notFound) {
                 separator = srcSetLength;
-            else if (srcSetAttribute[imageScaleStart] == ',')
+            } else if (srcSetAttribute[imageScaleStart] == ',') {
                 separator = imageScaleStart;
-            else {
+            } else {
                 // This part differs from the spec as the current implementation only supports pixel density descriptors for now.
                 size_t imageScaleEnd = srcSetAttribute.find(isHTMLSpaceOrComma, imageScaleStart + 1);
                 imageScaleEnd = (imageScaleEnd == notFound) ? srcSetLength : imageScaleEnd;
