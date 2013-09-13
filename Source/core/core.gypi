@@ -2478,6 +2478,8 @@
             'html/parser/HTMLScriptRunnerHost.h',
             'html/parser/HTMLSourceTracker.cpp',
             'html/parser/HTMLSourceTracker.h',
+            'html/parser/HTMLSrcsetParser.cpp',
+            'html/parser/HTMLSrcsetParser.h',
             'html/parser/HTMLStackItem.h',
             'html/parser/HTMLToken.h',
             'html/parser/HTMLTokenizer.cpp',

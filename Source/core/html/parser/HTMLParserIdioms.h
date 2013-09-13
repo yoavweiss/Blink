@@ -102,8 +102,6 @@ inline bool threadSafeHTMLNamesMatch(const HTMLIdentifier& tagName, const Qualif
     return tagName.asStringImpl() == qName.localName().impl();
 }
 
-String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& srcAttribute, const String& sourceSetAttribute);
-
 }
 
 #endif

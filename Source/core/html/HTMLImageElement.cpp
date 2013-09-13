@@ -33,6 +33,7 @@
 #include "core/html/HTMLAnchorElement.h"
 #include "core/html/HTMLFormElement.h"
 #include "core/html/parser/HTMLParserIdioms.h"
+#include "core/html/parser/HTMLSrcsetParser.h"
 #include "core/rendering/RenderImage.h"
 
 using namespace std;

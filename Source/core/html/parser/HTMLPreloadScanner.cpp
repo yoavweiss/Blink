@@ -33,6 +33,7 @@
 #include "core/html/InputTypeNames.h"
 #include "core/html/LinkRelAttribute.h"
 #include "core/html/parser/HTMLParserIdioms.h"
+#include "core/html/parser/HTMLSrcsetParser.h"
 #include "core/html/parser/HTMLTokenizer.h"
 #include "core/platform/chromium/TraceEvent.h"
 #include "wtf/MainThread.h"
@@ -107,9 +108,8 @@ public:
     void applySrcset()
     {
         // Resolve between src and srcSet if we have them.
-        if (RuntimeEnabledFeatures::srcsetEnabled() && !m_srcSetAttribute.isEmpty()) {
+        if (RuntimeEnabledFeatures::srcsetEnabled() && match(m_tagImpl, imgTag) && !m_srcSetAttribute.isEmpty())
             setUrlToLoad(bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute), true);
-        }
     }
 
     void processAttributes(const HTMLToken::AttributeList& attributes)
@@ -161,6 +161,9 @@ private:
                 setUrlToLoad(attributeValue);
             else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
                 m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
+            else if (match(m_tagImpl, imgTag) && match(attributeName, srcsetAttr))
+                m_srcSetAttribute = attributeValue;
+
         } else if (match(m_tagImpl, linkTag)) {
             if (match(attributeName, hrefAttr))
                 setUrlToLoad(attributeValue);
