@@ -658,7 +658,7 @@ void HTMLDocumentParser::startBackgroundParser()
     config->parser = m_weakFactory.createWeakPtr();
     config->xssAuditor = adoptPtr(new XSSAuditor);
     config->xssAuditor->init(document(), &m_xssAuditorDelegate);
-    config->preloadScanner = adoptPtr(new TokenPreloadScanner(document()->url().copy()));
+    config->preloadScanner = adoptPtr(new TokenPreloadScanner(document()->url().copy(), document()->devicePixelRatio()));
 
     ASSERT(config->xssAuditor->isSafeToSendToAnotherThread());
     ASSERT(config->preloadScanner->isSafeToSendToAnotherThread());

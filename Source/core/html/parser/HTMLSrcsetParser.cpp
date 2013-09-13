@@ -29,10 +29,11 @@ String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& sr
 {
     ImageCandidates imageCandidates;
 
-    const String srcSetAttributeValue = srcSetAttribute.simplifyWhiteSpace(isHTMLSpace);
+    String srcSetAttributeValue = srcSetAttribute.simplifyWhiteSpace(isHTMLSpace);
     Vector<String> srcSetTokens;
 
     srcSetAttributeValue.split(',', srcSetTokens);
+    imageCandidates.reserveInitialCapacity(srcSetTokens.size());
     for (size_t i = 0; i < srcSetTokens.size(); ++i) {
         Vector<String> data;
         float imgScaleFactor = 1.0;
@@ -59,7 +60,7 @@ String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& sr
         imageCandidates.append(image);
     }
 
-    const String src =  srcAttribute.simplifyWhiteSpace(isHTMLSpace);
+    String src = srcAttribute.simplifyWhiteSpace(isHTMLSpace);
     if (!src.isEmpty()) {
         ImageWithScale image;
         image.imageURL = src;

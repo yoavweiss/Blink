@@ -92,7 +92,7 @@ static String initiatorFor(const StringImpl* tagImpl)
 
 class TokenPreloadScanner::StartTagScanner {
 public:
-    explicit StartTagScanner(const StringImpl* tagImpl, float deviceScaleFactor = 1.0)
+    explicit StartTagScanner(const StringImpl* tagImpl, float deviceScaleFactor)
         : m_tagImpl(tagImpl)
         , m_linkIsStyleSheet(false)
         , m_inputIsImage(false)
@@ -105,11 +105,14 @@ public:
             m_tagImpl = 0;
     }
 
+    enum URLReplacement { URLReplacementAllow, URLReplacementDisallow };
+
+
     void applySrcset()
     {
         // Resolve between src and srcSet if we have them.
         if (RuntimeEnabledFeatures::srcsetEnabled() && match(m_tagImpl, imgTag) && !m_srcSetAttribute.isEmpty())
-            setUrlToLoad(bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute), true);
+            setUrlToLoad(bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute), URLReplacementAllow);
     }
 
     void processAttributes(const HTMLToken::AttributeList& attributes)
@@ -158,7 +161,7 @@ private:
 
         if (match(m_tagImpl, scriptTag) || match(m_tagImpl, imgTag)) {
             if (match(attributeName, srcAttr))
-                setUrlToLoad(attributeValue);
+                setUrlToLoad(attributeValue, URLReplacementDisallow);
             else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
                 m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
             else if (match(m_tagImpl, imgTag) && match(attributeName, srcsetAttr))
@@ -166,14 +169,14 @@ private:
 
         } else if (match(m_tagImpl, linkTag)) {
             if (match(attributeName, hrefAttr))
-                setUrlToLoad(attributeValue);
+                setUrlToLoad(attributeValue, URLReplacementDisallow);
             else if (match(attributeName, relAttr))
                 m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
             else if (match(attributeName, mediaAttr))
                 m_mediaAttribute = attributeValue;
         } else if (match(m_tagImpl, inputTag)) {
             if (match(attributeName, srcAttr))
-                setUrlToLoad(attributeValue);
+                setUrlToLoad(attributeValue, URLReplacementDisallow);
             else if (match(attributeName, typeAttr))
                 m_inputIsImage = equalIgnoringCase(attributeValue, InputTypeNames::image());
         }
@@ -185,11 +188,11 @@ private:
         return rel.isStyleSheet() && !rel.isAlternate() && rel.iconType() == InvalidIcon && !rel.isDNSPrefetch();
     }
 
-    void setUrlToLoad(const String& value, bool allowReplacement = false)
+    void setUrlToLoad(const String& value, URLReplacement replacement)
     {
         // We only respect the first src/href, per HTML5:
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#attribute-name-state
-        if (!allowReplacement && !m_urlToLoad.isEmpty())
+        if (replacement == URLReplacementDisallow && !m_urlToLoad.isEmpty())
             return;
         String url = stripLeadingAndTrailingHTMLSpaces(value);
         if (url.isEmpty())
