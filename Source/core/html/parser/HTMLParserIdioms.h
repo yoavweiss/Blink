@@ -82,6 +82,12 @@ inline bool isHTMLSpace(UChar character)
     return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r' || character == '\f');
 }
 
+inline bool isHTMLSpaceOrComma(UChar character)
+{
+    return isHTMLSpace(character) || character == ',';
+}
+
+
 inline bool isHTMLLineBreak(UChar character)
 {
     return character <= '\r' && (character == '\n' || character == '\r');

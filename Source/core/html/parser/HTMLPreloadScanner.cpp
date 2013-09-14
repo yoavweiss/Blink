@@ -105,14 +105,15 @@ public:
             m_tagImpl = 0;
     }
 
-    enum URLReplacement { URLReplacementAllow, URLReplacementDisallow };
-
+    enum URLReplacement {
+        AllowURLReplacement,
+        DisallowURLReplacement
+    };
 
     void applySrcset()
     {
-        // Resolve between src and srcSet if we have them.
-        if (RuntimeEnabledFeatures::srcsetEnabled() && match(m_tagImpl, imgTag) && !m_srcSetAttribute.isEmpty())
-            setUrlToLoad(bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute), URLReplacementAllow);
+        if (RuntimeEnabledFeatures::srcsetEnabled() && !m_srcSetAttribute.isNull())
+            setUrlToLoad(bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute), AllowURLReplacement);
     }
 
     void processAttributes(const HTMLToken::AttributeList& attributes)
@@ -154,29 +155,38 @@ public:
 
 private:
     template<typename NameType>
+    bool inline processScriptAndImageCommonAttributes(const NameType& attributeName, const String& attributeValue)
+    {
+        if (match(attributeName, srcAttr))
+            setUrlToLoad(attributeValue, DisallowURLReplacement);
+        else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
+            m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
+        else
+            return false;
+        return true;
+    }
+
+    template<typename NameType>
     void processAttribute(const NameType& attributeName, const String& attributeValue)
     {
         if (match(attributeName, charsetAttr))
             m_charset = attributeValue;
 
-        if (match(m_tagImpl, scriptTag) || match(m_tagImpl, imgTag)) {
-            if (match(attributeName, srcAttr))
-                setUrlToLoad(attributeValue, URLReplacementDisallow);
-            else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
-                m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
-            else if (match(m_tagImpl, imgTag) && match(attributeName, srcsetAttr))
+        if (match(m_tagImpl, scriptTag)) {
+            processScriptAndImageCommonAttributes(attributeName, attributeValue);
+        } else if (match(m_tagImpl, imgTag)) {
+            if (!processScriptAndImageCommonAttributes(attributeName, attributeValue) && match(attributeName, srcsetAttr))
                 m_srcSetAttribute = attributeValue;
-
         } else if (match(m_tagImpl, linkTag)) {
             if (match(attributeName, hrefAttr))
-                setUrlToLoad(attributeValue, URLReplacementDisallow);
+                setUrlToLoad(attributeValue, DisallowURLReplacement);
             else if (match(attributeName, relAttr))
                 m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
             else if (match(attributeName, mediaAttr))
                 m_mediaAttribute = attributeValue;
         } else if (match(m_tagImpl, inputTag)) {
             if (match(attributeName, srcAttr))
-                setUrlToLoad(attributeValue, URLReplacementDisallow);
+                setUrlToLoad(attributeValue, DisallowURLReplacement);
             else if (match(attributeName, typeAttr))
                 m_inputIsImage = equalIgnoringCase(attributeValue, InputTypeNames::image());
         }
@@ -192,7 +202,7 @@ private:
     {
         // We only respect the first src/href, per HTML5:
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#attribute-name-state
-        if (replacement == URLReplacementDisallow && !m_urlToLoad.isEmpty())
+        if (replacement == DisallowURLReplacement && !m_urlToLoad.isEmpty())
             return;
         String url = stripLeadingAndTrailingHTMLSpaces(value);
         if (url.isEmpty())

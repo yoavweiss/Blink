@@ -11,46 +11,38 @@
 namespace WebCore {
 
 class ImageWithScale {
-    const String* m_source;
-    int m_start;
-    int m_length;
-    float m_scaleFactor;
 public:
-    ImageWithScale(const String* source, size_t start, size_t length, float scaleFactor)
-        : m_source(source)
-        , m_start(start)
-        , m_length(length)
+    ImageWithScale(const String* source, unsigned start, unsigned length, float scaleFactor)
+        : m_string(source->createView(start, length))
         , m_scaleFactor(scaleFactor)
     {
     }
-    bool operator==(const ImageWithScale& image) const
-    {
-        return m_scaleFactor == image.m_scaleFactor && m_source == image.m_source && m_length == image.m_length && m_start == image.m_start;
-    }
+
     String toString() const
     {
-        return String(m_source->characters8() + m_start, m_length);
+        if (m_string.is8Bit())
+            return String(m_string.characters8(), m_string.length());
+        else
+            return String(m_string.characters16(), m_string.length());
     }
+
     float scaleFactor() const
     {
         return m_scaleFactor;
     }
+
+private:
+    StringView m_string;
+    float m_scaleFactor;
 };
-typedef Vector<ImageWithScale> ImageCandidates;
 
 static inline bool compareByScaleFactor(const ImageWithScale& first, const ImageWithScale& second)
 {
     return first.scaleFactor() < second.scaleFactor();
 }
 
-static inline bool isHTMLSpaceOrComma(UChar character)
-{
-    return isHTMLSpace(character) || character == ',';
-}
-
-// See the specifications for more details about the algorithm to follow.
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/embedded-content-1.html#processing-the-image-candidates
-static void parseImagesWithScaleFromSrcSetAttribute(const String& srcSetAttribute, ImageCandidates& imageCandidates)
+static void parseImagesWithScaleFromSrcSetAttribute(const String& srcSetAttribute, Vector<ImageWithScale>& imageCandidates)
 {
     size_t imageCandidateStart = 0;
     unsigned srcSetLength = srcSetAttribute.length();
@@ -125,14 +117,13 @@ static void parseImagesWithScaleFromSrcSetAttribute(const String& srcSetAttribut
 
 String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& srcAttribute, const String& srcSetAttribute)
 {
-    ImageCandidates imageCandidates;
+    Vector<ImageWithScale> imageCandidates;
 
     parseImagesWithScaleFromSrcSetAttribute(srcSetAttribute, imageCandidates);
 
-    const String src =  srcAttribute.simplifyWhiteSpace(isHTMLSpace);
-    if (!src.isEmpty()) {
+    String src = srcAttribute.simplifyWhiteSpace(isHTMLSpace);
+    if (!src.isEmpty())
         imageCandidates.append(ImageWithScale(&srcAttribute, 0, src.length(), 1.0));
-    }
 
     if (imageCandidates.isEmpty())
         return String();
@@ -140,10 +131,9 @@ String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& sr
     std::stable_sort(imageCandidates.begin(), imageCandidates.end(), compareByScaleFactor);
 
     size_t i;
-    for (i = 0; i < imageCandidates.size() - 1; ++i) {
+    for (i = 0; i < imageCandidates.size() - 1; ++i)
         if (imageCandidates[i].scaleFactor() >= deviceScaleFactor)
             break;
-    }
     return imageCandidates[i].toString();
 }
 

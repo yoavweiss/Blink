@@ -296,5 +296,4 @@ bool threadSafeMatch(const HTMLIdentifier& localName, const QualifiedName& qName
     return threadSafeEqual(localName.asStringImpl(), qName.localName().impl());
 }
 
-
 }
