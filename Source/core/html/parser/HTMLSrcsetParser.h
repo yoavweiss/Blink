@@ -9,7 +9,55 @@
 
 namespace WebCore {
 
-String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& srcAttribute, const String& sourceSetAttribute);
+class ImageCandidate {
+public:
+    ImageCandidate()
+    {
+    }
+
+    ImageCandidate& operator=(const ImageCandidate& candidate)
+    {
+        m_string = candidate.m_string;
+        m_scaleFactor = candidate.m_scaleFactor;
+        return *this; 
+    }
+
+    ImageCandidate(const String* source, unsigned start, unsigned length, float scaleFactor)
+        : m_string(source->createView(start, length))
+        , m_scaleFactor(scaleFactor)
+    {
+    }
+
+    inline String toString() const
+    {
+        if (m_string.is8Bit())
+            return String(m_string.characters8(), m_string.length());
+        else
+            return String(m_string.characters16(), m_string.length());
+    }
+
+    inline float scaleFactor() const
+    {
+        return m_scaleFactor;
+    }
+
+    inline bool isEmpty() const
+    {
+        return m_string.isEmpty();
+    }
+
+private:
+    StringView m_string;
+    float m_scaleFactor;
+};
+
+void parseImageCandidatesFromSrcsetAttribute(const String& srcsetAttribute, Vector<ImageCandidate>& imageCandidates);
+
+ImageCandidate bestFitSourceForSrcsetAttribute(float deviceScaleFactor, const String& srcsetAttribute);
+
+String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& srcAttribute, const String& srcsetAttribute);
+
+String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& srcAttribute, ImageCandidate& srcsetImageCandidate);
 
 }
 

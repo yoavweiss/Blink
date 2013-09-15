@@ -97,6 +97,7 @@ public:
         , m_linkIsStyleSheet(false)
         , m_inputIsImage(false)
         , m_deviceScaleFactor(deviceScaleFactor)
+        , m_encounteredSrc(false)
     {
         if (!match(m_tagImpl, imgTag)
             && !match(m_tagImpl, inputTag)
@@ -110,12 +111,6 @@ public:
         DisallowURLReplacement
     };
 
-    void applySrcset()
-    {
-        if (RuntimeEnabledFeatures::srcsetEnabled() && !m_srcSetAttribute.isNull())
-            setUrlToLoad(bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute), AllowURLReplacement);
-    }
-
     void processAttributes(const HTMLToken::AttributeList& attributes)
     {
         ASSERT(isMainThread());
@@ -126,8 +121,6 @@ public:
             String attributeValue = StringImpl::create8BitIfPossible(iter->value);
             processAttribute(attributeName, attributeValue);
         }
-
-        applySrcset();
     }
 
     void processAttributes(const Vector<CompactHTMLToken::Attribute>& attributes)
@@ -136,8 +129,6 @@ public:
             return;
         for (Vector<CompactHTMLToken::Attribute>::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
             processAttribute(iter->name, iter->value);
-
-        applySrcset();
     }
 
     PassOwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL, const SegmentedString& source)
@@ -173,10 +164,22 @@ private:
             m_charset = attributeValue;
 
         if (match(m_tagImpl, scriptTag)) {
-            processScriptAndImageCommonAttributes(attributeName, attributeValue);
+            if (match(attributeName, srcAttr))
+                setUrlToLoad(attributeValue, DisallowURLReplacement);
+            else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
+                m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
         } else if (match(m_tagImpl, imgTag)) {
-            if (!processScriptAndImageCommonAttributes(attributeName, attributeValue) && match(attributeName, srcsetAttr))
-                m_srcSetAttribute = attributeValue;
+            if ((match(attributeName, srcAttr) && !m_encounteredSrc)) {
+                m_encounteredSrc = true;
+                setUrlToLoad(bestFitSourceForImageAttributes(m_deviceScaleFactor, attributeValue, m_srcsetImageCandidate), AllowURLReplacement);
+            } else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull()) {
+                m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
+            } else if(RuntimeEnabledFeatures::srcsetEnabled()
+                && match(attributeName, srcsetAttr) 
+                && m_srcsetImageCandidate.isEmpty()) {
+                m_srcsetImageCandidate = bestFitSourceForSrcsetAttribute(m_deviceScaleFactor, attributeValue);
+                setUrlToLoad(bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcsetImageCandidate), AllowURLReplacement);
+            }
         } else if (match(m_tagImpl, linkTag)) {
             if (match(attributeName, hrefAttr))
                 setUrlToLoad(attributeValue, DisallowURLReplacement);
@@ -248,13 +251,14 @@ private:
 
     const StringImpl* m_tagImpl;
     String m_urlToLoad;
-    String m_srcSetAttribute;
+    ImageCandidate m_srcsetImageCandidate;
     String m_charset;
     String m_crossOriginMode;
     bool m_linkIsStyleSheet;
     String m_mediaAttribute;
     bool m_inputIsImage;
     float m_deviceScaleFactor;
+    bool m_encounteredSrc;
 };
 
 TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL, float deviceScaleFactor)
