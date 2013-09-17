@@ -36,6 +36,8 @@
 #include "core/html/parser/HTMLSrcsetParser.h"
 #include "core/rendering/RenderImage.h"
 
+#include "core/platform/Logging.h"
+
 using namespace std;
 
 namespace WebCore {
@@ -120,8 +122,16 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         if (renderer() && renderer()->isImage())
             toRenderImage(renderer())->updateAltText();
     } else if (name == srcAttr || name == srcsetAttr) {
-        if (RuntimeEnabledFeatures::srcsetEnabled())
-            m_bestFitImageURL = bestFitSourceForImageAttributes(document().devicePixelRatio(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
+        // TODO make sure we don't do this twice
+        if (RuntimeEnabledFeatures::srcsetEnabled()) {
+            AtomicString srcVal = fastGetAttribute(srcAttr);
+            AtomicString srcsetVal = fastGetAttribute(srcsetAttr);
+            String srcStr(srcVal.characters8(), srcVal.length());
+            String srcsetStr(srcsetVal.characters8(), srcsetVal.length());
+            LOG(Media, "attr values");
+            //m_bestFitImageURL = bestFitSourceForImageAttributes(document().devicePixelRatio(), srcStr.isolatedCopy(), srcsetStr.isolatedCopy());
+            //m_bestFitImageURL = bestFitSourceForImageAttributes(document().devicePixelRatio(), srcStr.isolatedCopy(), srcsetStr.isolatedCopy());
+        }
         m_imageLoader.updateFromElementIgnoringPreviousError();
     }
     else if (name == usemapAttr)

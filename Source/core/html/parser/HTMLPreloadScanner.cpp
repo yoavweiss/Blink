@@ -171,6 +171,7 @@ private:
         } else if (match(m_tagImpl, imgTag)) {
             if ((match(attributeName, srcAttr) && !m_encounteredSrc)) {
                 m_encounteredSrc = true;
+                unsigned stam = attributeValue.length();
                 setUrlToLoad(bestFitSourceForImageAttributes(m_deviceScaleFactor, attributeValue, m_srcsetImageCandidate), AllowURLReplacement);
             } else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull()) {
                 m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);

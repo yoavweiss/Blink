@@ -22,8 +22,9 @@ public:
         return *this; 
     }
 
-    ImageCandidate(const String* source, unsigned start, unsigned length, float scaleFactor)
-        : m_string(source->createView(start, length))
+    ImageCandidate(const String& source, unsigned start, unsigned length, float scaleFactor)
+        //: m_string(source.createView(start, length))
+        : m_string(StringView(source.impl(), start, length))
         , m_scaleFactor(scaleFactor)
     {
     }
@@ -50,8 +51,6 @@ private:
     StringView m_string;
     float m_scaleFactor;
 };
-
-void parseImageCandidatesFromSrcsetAttribute(const String& srcsetAttribute, Vector<ImageCandidate>& imageCandidates);
 
 ImageCandidate bestFitSourceForSrcsetAttribute(float deviceScaleFactor, const String& srcsetAttribute);
 
