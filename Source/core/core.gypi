@@ -3361,6 +3361,7 @@
             'css/RuleSetTest.cpp',
             'css/invalidation/DescendantInvalidationSetTest.cpp',
             'css/parser/BisonCSSParserTest.cpp',
+            'css/parser/MediaQueryCalcParserTest.cpp',
             'css/parser/MediaQueryTokenizerTest.cpp',
             'css/parser/SizesAttributeParserTest.cpp',
             'css/parser/MediaConditionTest.cpp',
