@@ -27,10 +27,10 @@ enum MediaQueryTokenType {
     RightBracketToken = 13,
     LeftBraceToken = 14,
     RightBraceToken = 15,
-    StringToken = 15,
-    BadStringToken = 16,
-    EOFToken = 17,
-    CommentToken = 18,
+    StringToken = 16,
+    BadStringToken = 17,
+    EOFToken = 18,
+    CommentToken = 19,
 };
 
 enum NumericValueType {
@@ -80,6 +80,9 @@ private:
 
     BlockType m_blockType;
 };
+
+typedef Vector<MediaQueryToken>::iterator MediaQueryTokenIterator;
+
 
 } // namespace
 

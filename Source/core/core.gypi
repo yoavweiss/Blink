@@ -906,6 +906,7 @@
             'css/parser/MediaQueryBlockWatcher.cpp',
             'css/parser/MediaQueryInputStream.cpp',
             'css/parser/MediaQueryParser.cpp',
+            'css/parser/MediaQueryCalcParser.cpp',
             'css/parser/MediaQueryToken.cpp',
             'css/parser/MediaQueryTokenizer.cpp',
             'css/parser/SizesAttributeParser.cpp',
